@@ -117,6 +117,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AoESystem.cpp" />
+    <ClCompile Include="CentralnySklad.cpp" />
     <ClCompile Include="Dron.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Region.cpp" />
@@ -128,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AoESystem.h" />
+    <ClInclude Include="CentralnySklad.h" />
     <ClInclude Include="Dron.h" />
     <ClInclude Include="EnumReg.h" />
     <ClInclude Include="Region.h" />

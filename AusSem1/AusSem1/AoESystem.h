@@ -13,5 +13,6 @@ public:
 	Region getRegion(eRegiony::EnumRegion nazovRegionu);
 	bool pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady);
 	bool pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dobaNabijania);
+	void naplnRegiony();
 };
 

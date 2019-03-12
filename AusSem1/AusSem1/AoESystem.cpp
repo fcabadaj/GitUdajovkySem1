@@ -4,37 +4,27 @@
 AoESystem::AoESystem():
 	regiony_(new ArrayList<Region*>())
 {
-	regiony_->add(new Region(eRegiony::BA));
+	
 }
 
 
 AoESystem::~AoESystem()
 {
+	delete regiony_;
 }
 
-bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady)
+Region AoESystem::getRegion(eRegiony::EnumRegion nazovRegionu)
 {
-	Vozidlo *vozidlo = new Vozidlo(spz,nosnost,prevadzkoveNaklady);
-	
-	if (static_cast<int>(regiony_->size()) == 0)
+	for (unsigned int i = 0; i < static_cast<int>(regiony_->size()); i++)
 	{
-		(*regiony_)[0]->getVozovyPark().add(vozidlo);
-		return true;
-	}
-	else
-	{
-		for (unsigned int i = 0; i < static_cast<int>(regiony_->size()); i++)
+		if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
 		{
-			if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
-			{
-				regiony_->operator[](i)->getVozovyPark().add(vozidlo);
-				return true;
-			}
+			return *regiony_->operator[](i);
 		}
-		return false;
 	}
-	
 }
+
+
 
 bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dobaNabijania)
 {
@@ -50,4 +40,27 @@ bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int t
 	}
 	return false;
 
+}
+
+bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady)
+{
+	Vozidlo *vozidlo = new Vozidlo(spz, nosnost, prevadzkoveNaklady);
+
+	for (unsigned int i = 0; i < static_cast<int>(regiony_->size()); i++)
+	{
+		if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
+		{
+			regiony_->operator[](i)->getVozovyPark().add(vozidlo);
+			return true;
+		}
+	}
+	return false;
+}
+
+void AoESystem::naplnRegiony()
+{
+	Region *region = new Region(eRegiony::ZA);
+	regiony_->add(region);
+	Region *region2 = new Region(eRegiony::BA);
+	regiony_->add(region2);
 }

@@ -12,16 +12,13 @@ class Region
 {
 private:
 	eRegiony::EnumRegion nazovRegionu_;
-	ArrayList<Vozidlo*> *vozovyPark_;
 	ArrayList<Dron*>	*drony_;
 	Sklad *sklad_;
 public:
 	Region(eRegiony::EnumRegion nazovRegionu);
 	~Region();
-	ArrayList<Vozidlo*> getVozovyPark() { return *vozovyPark_;  }
 	ArrayList<Dron*> getDrony() { return *drony_;  }
 	eRegiony::EnumRegion getNazovRegionu() { return nazovRegionu_; };
-	void vypisUdajeOVozidlach();
 	
 };
 
