@@ -118,8 +118,10 @@
   <ItemGroup>
     <ClCompile Include="AoESystem.cpp" />
     <ClCompile Include="CentralnySklad.cpp" />
+    <ClCompile Include="Datum.cpp" />
     <ClCompile Include="Dron.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Objednavka.cpp" />
     <ClCompile Include="Region.cpp" />
     <ClCompile Include="Sklad.cpp" />
     <ClCompile Include="structures\ds_routines.cpp" />
@@ -130,8 +132,10 @@
   <ItemGroup>
     <ClInclude Include="AoESystem.h" />
     <ClInclude Include="CentralnySklad.h" />
+    <ClInclude Include="Datum.h" />
     <ClInclude Include="Dron.h" />
     <ClInclude Include="EnumReg.h" />
+    <ClInclude Include="Objednavka.h" />
     <ClInclude Include="Region.h" />
     <ClInclude Include="Sklad.h" />
     <ClInclude Include="Vozidlo.h" />

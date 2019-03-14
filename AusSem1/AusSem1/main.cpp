@@ -12,11 +12,16 @@ using namespace eRegiony;
 
 int main() 
 {	
-	Region *region = new Region(BA);
+	
 	AoESystem *system = new AoESystem();
+	Datum* datum = new Datum(1, 1, 1, 1);
+	system->pridajVozidlo(ZA,"ZA654FS",50,15,datum);
+
+	system->getRegion(ZA).getCentralnySklad().vypisVozidla();	
 
 	int cislo2 = 0;
 	cin >> cislo2;
+
 
 	return 0;
 }

@@ -5,6 +5,7 @@
 #include "Dron.h"
 #include "Sklad.h"
 #include "EnumReg.h"
+#include "CentralnySklad.h"
 
 using namespace structures;
 
@@ -12,13 +13,12 @@ class Region
 {
 private:
 	eRegiony::EnumRegion nazovRegionu_;
-	ArrayList<Dron*>	*drony_;
-	Sklad *sklad_;
+	CentralnySklad *centralnySklad_;
 public:
-	Region(eRegiony::EnumRegion nazovRegionu);
-	~Region();
-	ArrayList<Dron*> getDrony() { return *drony_;  }
+	Region(eRegiony::EnumRegion nazovRegionu, CentralnySklad* centralnySklad = nullptr);
+	~Region();	
 	eRegiony::EnumRegion getNazovRegionu() { return nazovRegionu_; };
+	CentralnySklad& getCentralnySklad() { return *centralnySklad_; };
 	
 };
 

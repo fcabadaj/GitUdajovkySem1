@@ -45,6 +45,12 @@
     <ClCompile Include="CentralnySklad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Datum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Objednavka.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vozidlo.h">
@@ -66,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CentralnySklad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Datum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objednavka.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

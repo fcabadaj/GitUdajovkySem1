@@ -13,6 +13,8 @@ Dron::Dron(int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dob
 }
 
 
+
+
 Dron::~Dron()
 {
 	sCislo_ = 0;

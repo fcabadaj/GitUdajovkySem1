@@ -1,66 +1,84 @@
 #include "AoESystem.h"
 
-
 AoESystem::AoESystem():
-	regiony_(new ArrayList<Region*>())
+	regiony_(new Array<Region*>(25))
 {
-	
+	(*regiony_)[0] = new Region(eRegiony::ZA, new CentralnySklad());
+	(*regiony_)[1] = new Region(eRegiony::BA);
+	(*regiony_)[2] = new Region(eRegiony::ZA);
+
 }
 
 
 AoESystem::~AoESystem()
 {
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		delete (*regiony_)[i];
+	}
 	delete regiony_;
 }
 
 Region AoESystem::getRegion(eRegiony::EnumRegion nazovRegionu)
 {
-	for (unsigned int i = 0; i < static_cast<int>(regiony_->size()); i++)
+	for (unsigned int i = 0; i < regiony_->size(); i++)
 	{
-		if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
+		if ((*regiony_)[i]->getNazovRegionu() == nazovRegionu)
 		{
-			return *regiony_->operator[](i);
+			return *(*regiony_)[i];
 		}
 	}
 }
 
-
-
-bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dobaNabijania)
+bool AoESystem::skontrolujSPZ(string spz)
 {
-	Dron *dron = new Dron(sCislo, typ, nosnost, rychlost, dobaLetu, dobaNabijania);
-
-	for  (unsigned int i = 0;  i < static_cast<int>(regiony_->size()); i++)
+	if (spz.length() != 7)
 	{
-		if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
-		{
-			regiony_->operator[](i)->getDrony().add(dron);
-			return true;
-		}		
+		cout << "Zle zadana SPZ, Musi mat 7 znakov \n";
+		return false;
 	}
-	return false;
-
+	for (unsigned int i = 0;  i < regiony_->size(); i++)
+	{
+		if ((*regiony_)[i]->getCentralnySklad().getVozovyPark()->operator[](i)->getSPZ() == spz)
+			cout << "Vozidlo s takouto SPZ je uz zaevidovane! \n";
+		return false;
+	}
+	return true;
 }
 
-bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady)
-{
-	Vozidlo *vozidlo = new Vozidlo(spz, nosnost, prevadzkoveNaklady);
+//bool aoesystem::pridajdrona(eregiony::enumregion nazovregionu, int scislo, int typ, int nosnost, int rychlost, int dobaletu, int dobanabijania)
+//{
+//	dron *dron = new dron(scislo, typ, nosnost, rychlost, dobaletu, dobanabijania);
+//
+//	for  (unsigned int i = 0;  i < regiony_->size(); i++)
+//	{
+//		if ((*regiony_)[i]->getnazovregionu() == nazovregionu)
+//		{
+//			regiony_->operator[](i)->getdrony().add(dron);
+//			return true;
+//		}		
+//	}
+//	return false;
+//
+//}
 
-	for (unsigned int i = 0; i < static_cast<int>(regiony_->size()); i++)
+bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady, Datum *datum)
+{
+	if (skontrolujSPZ(spz))
 	{
-		if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
+		Vozidlo *vozidlo = new Vozidlo(spz, nosnost, prevadzkoveNaklady, datum);
+
+		for (unsigned int i = 0; i < regiony_->size(); i++)
 		{
-			regiony_->operator[](i)->getVozovyPark().add(vozidlo);
-			return true;
+			if ((*regiony_)[i]->getNazovRegionu() == nazovRegionu)
+			{
+				(*regiony_)[i]->getCentralnySklad().getVozovyPark()->add(vozidlo);
+				cout << "Vozidlo bolo pridane uspesne" << endl;
+				return true;
+			}
 		}
 	}
 	return false;
+	
 }
 
-void AoESystem::naplnRegiony()
-{
-	Region *region = new Region(eRegiony::ZA);
-	regiony_->add(region);
-	Region *region2 = new Region(eRegiony::BA);
-	regiony_->add(region2);
-}
