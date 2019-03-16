@@ -4,15 +4,10 @@ class Objednavka
 {
 private:
 	int hmotnost;
+	int miesto;
+	int vzdialenostSkladu;
+
 public:
 	Objednavka();
 	~Objednavka();
 };
-
-/*
-	TO DO:
-			.hmotnost
-			.odosielatel
-			.prijmatel
-			."hodnota"
-*/

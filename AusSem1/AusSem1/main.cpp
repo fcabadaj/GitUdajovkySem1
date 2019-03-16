@@ -17,16 +17,17 @@ int main()
 {
 	initHeapMonitor();
 	AoESystem *esystem = new AoESystem();
-	Datum* datum = new Datum(1, 1);
+	Datum* datum = new Datum(1);
 
 	int choice = 155;
 	menu(choice);
 
 	while (choice != 0)
 	{
+		esystem->vypisDatum();
 		string spz;
-		int nosnost;
 
+		int nosnost;
 		int nazovRegionu;
 		int sCislo;
 		int typ;
@@ -42,8 +43,9 @@ int main()
 			cin >> spz;
 			cout << "Zadaj nosnost vozidla v tonach \n";
 			cin >> nosnost;
-			esystem->pridajVozidlo(ZA, spz, nosnost, 15, datum);
+			esystem->pridajVozidlo(ZA, spz, nosnost, 15);
 			break;
+
 		case 2:
 			cout << "PRIDANIE DRONA DO FLOTILY DRONOV \n";
 			cout << "============================================== \n";
@@ -56,11 +58,17 @@ int main()
 			cin >> typ;
 			esystem->pridajDrona(static_cast<EnumRegion>(nazovRegionu), sCislo, typ);
 			break;
+
 		case 3:
 			esystem->vypisVozidla();
 			break;
+
 		case 4:
 			esystem->vypisDrony();
+			break;
+
+		case 5: 
+			esystem->pridajHodinu();
 			break;
 
 		default:
@@ -84,6 +92,7 @@ void menu(int &c)
 	cout << "stlac 2 - pre pridanie drona \n";
 	cout << "stlac 3 - pre vypis vozidiel \n";
 	cout << "stlac 4 - pre vypis dronov \n";
+	cout << "stlac 5 - pre pridanie hodiny \n";
 	cout << "======================================================= \n";
 	cin >> c;
 	system("CLS");

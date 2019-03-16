@@ -4,12 +4,12 @@
 using namespace eRegiony;
 
 AoESystem::AoESystem():
-	regiony_(new Array<Region*>(25))
+	regiony_(new Array<Region*>(25)),
+	datum_(new Datum(1))
 {
 	regiony_->operator[](0) = new Region(eRegiony::ZA, new CentralnySklad());
 	initRegiony();
 }
-
 
 AoESystem::~AoESystem()
 {
@@ -18,6 +18,7 @@ AoESystem::~AoESystem()
 		delete (*regiony_)[i];
 	}
 	delete regiony_;
+	delete datum_;
 }
 
 Region AoESystem::getRegion(eRegiony::EnumRegion nazovRegionu)
@@ -56,10 +57,11 @@ bool AoESystem::skontrolujSPZ(string spz)
 	return regiony_->operator[](0)->getCentralnySklad()->skontrolujSPZ(spz);
 }
 
-bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady, Datum *datum)
+bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady)
 {
 	if (skontrolujSPZ(spz))
 	{
+		Datum *datum = new Datum(*datum_);
 		Vozidlo *vozidlo = new Vozidlo(spz, nosnost, prevadzkoveNaklady, datum);
 
 		for (unsigned int i = 0; i < regiony_->size(); i++)
@@ -101,7 +103,8 @@ bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int t
 			dobaNabijania = 5;
 		}
 		
-		Dron *dron = new Dron(sCislo, typ, nosnost, rychlost, dobaLetu, dobaNabijania);
+		Datum *datum = new Datum(*datum_);
+		Dron *dron = new Dron(sCislo, typ, nosnost, rychlost, dobaLetu, dobaNabijania,datum);
 
 		for (unsigned int i = 0; i < regiony_->size(); i++)
 		{
@@ -135,6 +138,16 @@ void AoESystem::initRegiony()
 		EnumRegion nazovRegionu{ static_cast<EnumRegion>(i) };
 		regiony_->operator[](i) = new Region(nazovRegionu);
 	}
+}
+
+void AoESystem::pridajHodinu()
+{
+	datum_->pridajHodinu();
+}
+
+void AoESystem::vypisDatum()
+{
+	datum_->vypisSa();
 }
 
 
