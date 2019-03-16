@@ -1,3 +1,4 @@
+#include "structures/heap_monitor.h"
 #include <string>
 #include <iostream>
 #include "Datum.h"
@@ -16,7 +17,7 @@ private:
 public:
 	Vozidlo(string spz, int nosnost, int prevadzkoveNaklady, Datum *datum);
 	~Vozidlo();
-	void vypisVozidlo();
+	void vypisSa();
 	string getSPZ() { return spz_; };
 };
 

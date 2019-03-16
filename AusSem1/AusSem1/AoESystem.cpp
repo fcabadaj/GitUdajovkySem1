@@ -1,12 +1,13 @@
 #include "AoESystem.h"
+#include "structures/heap_monitor.h"
+
+using namespace eRegiony;
 
 AoESystem::AoESystem():
 	regiony_(new Array<Region*>(25))
 {
-	(*regiony_)[0] = new Region(eRegiony::ZA, new CentralnySklad());
-	(*regiony_)[1] = new Region(eRegiony::BA);
-	(*regiony_)[2] = new Region(eRegiony::ZA);
-
+	regiony_->operator[](0) = new Region(eRegiony::ZA, new CentralnySklad());
+	initRegiony();
 }
 
 
@@ -30,6 +31,21 @@ Region AoESystem::getRegion(eRegiony::EnumRegion nazovRegionu)
 	}
 }
 
+bool AoESystem::skontrolujSC(int sCislo)
+{
+	if (sCislo > 10000 || sCislo < 1)
+	{
+		cout << "Hodnoty serioveho cisla su platne od 1 - 9999! \n";
+		return false;
+	}
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		if (regiony_->operator[](i)->getLokalnySklad()->skontrolujSCislo(sCislo) == false)
+			return false;
+	}
+	return true;
+}
+
 bool AoESystem::skontrolujSPZ(string spz)
 {
 	if (spz.length() != 7)
@@ -37,30 +53,8 @@ bool AoESystem::skontrolujSPZ(string spz)
 		cout << "Zle zadana SPZ, Musi mat 7 znakov \n";
 		return false;
 	}
-	for (unsigned int i = 0;  i < regiony_->size(); i++)
-	{
-		if ((*regiony_)[i]->getCentralnySklad().getVozovyPark()->operator[](i)->getSPZ() == spz)
-			cout << "Vozidlo s takouto SPZ je uz zaevidovane! \n";
-		return false;
-	}
-	return true;
+	return regiony_->operator[](0)->getCentralnySklad()->skontrolujSPZ(spz);
 }
-
-//bool aoesystem::pridajdrona(eregiony::enumregion nazovregionu, int scislo, int typ, int nosnost, int rychlost, int dobaletu, int dobanabijania)
-//{
-//	dron *dron = new dron(scislo, typ, nosnost, rychlost, dobaletu, dobanabijania);
-//
-//	for  (unsigned int i = 0;  i < regiony_->size(); i++)
-//	{
-//		if ((*regiony_)[i]->getnazovregionu() == nazovregionu)
-//		{
-//			regiony_->operator[](i)->getdrony().add(dron);
-//			return true;
-//		}		
-//	}
-//	return false;
-//
-//}
 
 bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady, Datum *datum)
 {
@@ -72,13 +66,76 @@ bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int
 		{
 			if ((*regiony_)[i]->getNazovRegionu() == nazovRegionu)
 			{
-				(*regiony_)[i]->getCentralnySklad().getVozovyPark()->add(vozidlo);
-				cout << "Vozidlo bolo pridane uspesne" << endl;
+				(*regiony_)[i]->getCentralnySklad()->getVozovyPark()->add(vozidlo);
+				cout << "Vozidlo bolo pridane uspesne " << endl;
 				return true;
 			}
 		}
 	}
-	return false;
-	
+	return false;	
 }
+
+
+bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int typ)
+{
+	if (skontrolujSC(sCislo))
+	{
+		int nosnost;
+		int rychlost;
+		int dobaLetu;
+		int dobaNabijania;
+
+		if (typ == 1)
+		{
+			nosnost = 2;
+			rychlost = 80;
+			dobaLetu = 40;
+			dobaNabijania = 3;
+			
+		}
+		else if(typ == 2)
+		{
+			nosnost = 5;
+			rychlost = 40;
+			dobaLetu = 60;
+			dobaNabijania = 5;
+		}
+		
+		Dron *dron = new Dron(sCislo, typ, nosnost, rychlost, dobaLetu, dobaNabijania);
+
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			regiony_->operator[](i)->getLokalnySklad()->getDrony()->add(dron);
+			cout << "Dron bol uspesne pridany \n";
+			return true;
+		}
+
+	}
+	return false;
+}
+
+void AoESystem::vypisVozidla()
+{
+	cout << "Vypis vozidiel v centralnom sklade regionu ZA \n";
+	regiony_->operator[](0)->getCentralnySklad()->vypisVozidla();
+}
+
+void AoESystem::vypisDrony()
+{
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		regiony_->operator[](i)->getLokalnySklad()->vypisDrony();
+	}
+}
+
+void AoESystem::initRegiony()
+{
+	for (unsigned int i = 1; i < regiony_->size(); i++)
+	{
+		EnumRegion nazovRegionu{ static_cast<EnumRegion>(i) };
+		regiony_->operator[](i) = new Region(nazovRegionu);
+	}
+}
+
+
 

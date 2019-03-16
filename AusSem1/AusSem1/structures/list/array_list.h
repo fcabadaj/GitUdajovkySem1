@@ -287,15 +287,13 @@ namespace structures
 	template<typename T>
 	inline Iterator<T>* ArrayList<T>::getBeginIterator() const
 	{
-		//TODO 03: ArrayList
-		throw std::exception("ArrayList<T>::getBeginIterator: Not implemented yet.");
+		return new ArrayListIterator(this, 0);
 	}
 
 	template<typename T>
 	inline Iterator<T>* ArrayList<T>::getEndIterator() const
 	{
-		//TODO 03: ArrayList
-		throw std::exception("ArrayList<T>::getEndIterator: Not implemented yet.");
+		return new ArrayListIterator(this, static_cast<int>(size_));
 	}
 
 	template<typename T>
@@ -317,35 +315,34 @@ namespace structures
 	template<typename T>
 	inline ArrayList<T>::ArrayListIterator::~ArrayListIterator()
 	{
-		//TODO 03: ArrayList<T>::ArrayListIterator
+		arrayList_ = nullptr;
+		position_ = 0;
 	}
 
 	template<typename T>
 	inline Iterator<T>& ArrayList<T>::ArrayListIterator::operator=(const Iterator<T>& other)
 	{
-		//TODO 03: ArrayList
-		throw std::exception("ArrayList<T>::ArrayListIterator::operator=: Not implemented yet.");
+		position_ = dynamic_cast<const ArrayListIterator&>(other).position_;
+		return *this;
 	}
 
 	template<typename T>
 	inline bool ArrayList<T>::ArrayListIterator::operator!=(const Iterator<T>& other)
 	{
-		//TODO 03: ArrayList
-		throw std::exception("ArrayList<T>::ArrayListIterator::operator!=: Not implemented yet.");
+		return position_ != dynamic_cast<const ArrayListIterator&>(other).position_;
 	}
 
 	template<typename T>
 	inline const T ArrayList<T>::ArrayListIterator::operator*()
 	{
-		//TODO 03: ArrayList
-		throw std::exception("ArrayList<T>::ArrayListIterator::operator*: Not implemented yet.");
+		return (*arrayList_)[position_];
 	}
 
 	template<typename T>
 	inline Iterator<T>& ArrayList<T>::ArrayListIterator::operator++()
 	{
-		//TODO 03: ArrayList
-		throw std::exception("ArrayList<T>::ArrayListIterator::operator++: Not implemented yet.");
+		position_++;
+		return *this;
 	}
 
 }

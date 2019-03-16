@@ -1,11 +1,12 @@
 #pragma once
+#include "structures/heap_monitor.h"
 
 namespace eRegiony {
 
 enum EnumRegion 
 {
-	MA,BA,TT,KN,NR,
-	LV,TN,PD,ZA,MT,
+	ZA,MA,BA,TT,KN,
+	LV,TN,PD,MT,NR,
 	CA,NO,LM,BB,ZV,
 	KA,LC,RA,PP,SL,
 	SN,KE,PO,HE,MI

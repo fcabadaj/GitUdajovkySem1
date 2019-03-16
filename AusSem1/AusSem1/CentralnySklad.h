@@ -1,5 +1,5 @@
 #pragma once
-
+#include "structures/heap_monitor.h"
 #include "structures/list/array_list.h"
 #include "Vozidlo.h"
 
@@ -15,5 +15,6 @@ public:
 	~CentralnySklad();
 	ArrayList<Vozidlo*>* getVozovyPark() { return vozovyPark_; };
 	void vypisVozidla();
+	bool skontrolujSPZ(string spz);
 };
 

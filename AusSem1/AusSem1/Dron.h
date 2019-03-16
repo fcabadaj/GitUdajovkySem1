@@ -1,4 +1,5 @@
 #pragma once
+#include "structures/heap_monitor.h"
 class Dron
 {
 
@@ -13,5 +14,7 @@ private:
 public:
 	Dron(int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dobaNabijania);
 	~Dron();
+	int getSCislo() { return sCislo_; };
+	void vypisSa();
 };
 

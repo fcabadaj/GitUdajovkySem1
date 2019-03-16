@@ -1,6 +1,8 @@
+#include "structures/heap_monitor.h"
 #include <iostream>
 #include "Dron.h"
 
+using namespace std;
 
 Dron::Dron(int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dobaNabijania) :
 	sCislo_(sCislo),
@@ -12,9 +14,6 @@ Dron::Dron(int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dob
 {
 }
 
-
-
-
 Dron::~Dron()
 {
 	sCislo_ = 0;
@@ -23,4 +22,9 @@ Dron::~Dron()
 	rychlost_ = 0;
 	dobaLetu_ = 0;
 	dobaNabijania_ = 0;
+}
+
+void Dron::vypisSa()
+{
+	cout << "Dron Seriove Cislo: " << sCislo_ << " Typ: " << typ_ << " Nosnost: " << nosnost_ << endl;
 }
