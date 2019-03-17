@@ -5,7 +5,8 @@
 using namespace std;
 
 Sklad::Sklad():
-	drony_(new ArrayList<Dron*>)
+	drony_(new ArrayList<Dron*>),
+	objednavky_(new ExplicitQueue<Objednavka*>)
 {
 }
 
@@ -16,6 +17,14 @@ Sklad::~Sklad()
 		delete (*drony_)[i];
 	}
 	delete drony_;
+	drony_ = nullptr;
+
+	for (unsigned int i = 0; i < objednavky_->size(); i++)
+	{
+		delete objednavky_->pop();
+	}
+	delete objednavky_;
+	objednavky_ = nullptr;
 }
 
 void Sklad::vypisDrony()
@@ -23,6 +32,14 @@ void Sklad::vypisDrony()
 	for (unsigned int i = 0; i < drony_->size(); i++)
 	{
 		drony_->operator[](i)->vypisSa();
+	}
+}
+
+void Sklad::vypisObjednavky()
+{
+	for (unsigned int i = 0; i < objednavky_->size(); i++)
+	{
+		objednavky_->pop()->vypisSa();
 	}
 }
 
@@ -36,5 +53,11 @@ bool Sklad::skontrolujSCislo(int cislo)
 			return false;
 		}
 	}
+	return true;
+}
+
+bool Sklad::skontrolujZamietnutieObj(int id)
+{
+
 	return true;
 }

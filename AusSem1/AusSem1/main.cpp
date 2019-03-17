@@ -31,14 +31,22 @@ int main()
 		int nazovRegionu;
 		int sCislo;
 		int typ;
+		int id;
+		int vzdialenost;
+		int hmotnost;
 
 		switch (choice)
 		{
 		case 0: return 0;
 			break;
-		case 1: 			
+
+		case 1:
+			esystem->pridajHodinu();
+			break;
+
+		case 2: 			
 			cout << "PRIDANIE VOZIDLA DO VOZOVEHO PARKU\n";
-			cout << "============================================== \n";
+			cout << "======================================================= \n";
 			cout << "Zadaj 7 znakovu SPZ: \n";
 			cin >> spz;
 			cout << "Zadaj nosnost vozidla v tonach \n";
@@ -46,9 +54,9 @@ int main()
 			esystem->pridajVozidlo(ZA, spz, nosnost, 15);
 			break;
 
-		case 2:
+		case 3:
 			cout << "PRIDANIE DRONA DO FLOTILY DRONOV \n";
-			cout << "============================================== \n";
+			cout << "======================================================= \n";
 			cout << "Zadaj region do ktoreho chces drona pridat \n";
 			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
 			cin >> nazovRegionu;
@@ -59,16 +67,31 @@ int main()
 			esystem->pridajDrona(static_cast<EnumRegion>(nazovRegionu), sCislo, typ);
 			break;
 
-		case 3:
+		case 4:
+			cout << "PRIDANIE OBJEDNAVKY DO SKLADU \n";
+			cout << "======================================================= \n";
+			cout << "Zadaj region do ktoreho chces drona pridat \n";
+			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+			cin >> nazovRegionu;
+			cout << "Zadaj id Objednavky (integer) \n";
+			cin >> id;
+			cout << "Zadaj hmotnost Objednavky \n";
+			cin >> hmotnost;
+			cout << "Zadaj vzdialenost miesta vyzdvihnutia od lokalneho skladu \n";
+			cin >> vzdialenost;
+			esystem->pridajObjednavku(id, static_cast<EnumRegion>(nazovRegionu), hmotnost, vzdialenost);
+			break;
+
+		case 5:
 			esystem->vypisVozidla();
 			break;
 
-		case 4:
+		case 6:
 			esystem->vypisDrony();
-			break;
+			break;	
 
-		case 5: 
-			esystem->pridajHodinu();
+		case 7:
+			esystem->vypisObjednavky();
 			break;
 
 		default:
@@ -88,11 +111,13 @@ void menu(int &c)
 {	
 	cout << "======================================================= \n";
 	cout << "stlac 0 - pre ukoncenie programu \n";
-	cout << "stlac 1 - pre pridanie vozidla \n";
-	cout << "stlac 2 - pre pridanie drona \n";
-	cout << "stlac 3 - pre vypis vozidiel \n";
-	cout << "stlac 4 - pre vypis dronov \n";
-	cout << "stlac 5 - pre pridanie hodiny \n";
+	cout << "stlac 1 - pre pridanie hodiny \n";
+	cout << "stlac 2 - pre pridanie vozidla \n";
+	cout << "stlac 3 - pre pridanie drona \n";
+	cout << "stlac 4 - pre pridanie objednavky \n";
+	cout << "stlac 5 - pre vypis vozidiel \n";
+	cout << "stlac 6 - pre vypis dronov \n";
+	cout << "stlac 7 - pre vypis objednavok \n";	
 	cout << "======================================================= \n";
 	cin >> c;
 	system("CLS");

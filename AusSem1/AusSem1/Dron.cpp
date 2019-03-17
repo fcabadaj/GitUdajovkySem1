@@ -24,6 +24,7 @@ Dron::~Dron()
 	dobaLetu_ = 0;
 	dobaNabijania_ = 0;
 	delete datum_;
+	datum_ = nullptr;
 }
 
 void Dron::vypisSa()

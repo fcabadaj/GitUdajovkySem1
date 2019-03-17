@@ -18,7 +18,9 @@ AoESystem::~AoESystem()
 		delete (*regiony_)[i];
 	}
 	delete regiony_;
+	regiony_ = nullptr;
 	delete datum_;
+	datum_ = nullptr;
 }
 
 Region AoESystem::getRegion(eRegiony::EnumRegion nazovRegionu)
@@ -57,6 +59,24 @@ bool AoESystem::skontrolujSPZ(string spz)
 	return regiony_->operator[](0)->getCentralnySklad()->skontrolujSPZ(spz);
 }
 
+bool AoESystem::skontrolujZamietnutieObj(int id, eRegiony::EnumRegion nazovRegionu)
+{
+	Sklad *sklad = nullptr;
+
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
+		{
+			sklad = regiony_->operator[](i)->getLokalnySklad();
+		}
+	}
+
+	if (sklad->skontrolujZamietnutieObj(id))
+		return true;
+
+	return false;
+}
+
 bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady)
 {
 	if (skontrolujSPZ(spz))
@@ -89,7 +109,7 @@ bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int t
 
 		if (typ == 1)
 		{
-			nosnost = 2;
+			nosnost = 2000;
 			rychlost = 80;
 			dobaLetu = 40;
 			dobaNabijania = 3;
@@ -97,7 +117,7 @@ bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int t
 		}
 		else if(typ == 2)
 		{
-			nosnost = 5;
+			nosnost = 5000;
 			rychlost = 40;
 			dobaLetu = 60;
 			dobaNabijania = 5;
@@ -117,6 +137,23 @@ bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int t
 	return false;
 }
 
+bool AoESystem::pridajObjednavku(int id, eRegiony::EnumRegion nazovRegionu, int hmotnost, int vzdialenostOdSkladu)
+{
+	if (skontrolujZamietnutieObj(id, nazovRegionu))
+	{
+		Objednavka *objednavka = new Objednavka(id,hmotnost,nazovRegionu,vzdialenostOdSkladu);
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			if (regiony_->operator[](i)->getNazovRegionu() == nazovRegionu)
+			{				
+				regiony_->operator[](i)->getLokalnySklad()->getObjednavky()->push(objednavka);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void AoESystem::vypisVozidla()
 {
 	cout << "Vypis vozidiel v centralnom sklade regionu ZA \n";
@@ -128,6 +165,14 @@ void AoESystem::vypisDrony()
 	for (unsigned int i = 0; i < regiony_->size(); i++)
 	{
 		regiony_->operator[](i)->getLokalnySklad()->vypisDrony();
+	}
+}
+
+void AoESystem::vypisObjednavky()
+{
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		regiony_->operator[](i)->getLokalnySklad()->vypisObjednavky();
 	}
 }
 
