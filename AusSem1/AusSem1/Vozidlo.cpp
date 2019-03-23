@@ -2,7 +2,7 @@
 #include "Vozidlo.h"
 #include <string>
 
-Vozidlo::Vozidlo(string spz, int nosnost, int prevadzkoveNaklady, Datum *datum) :
+Vozidlo::Vozidlo(string spz, double nosnost, double prevadzkoveNaklady, Datum *datum) :
 	spz_(spz),
 	nosnost_(nosnost),
 	prevadzkoveNaklady_(prevadzkoveNaklady),

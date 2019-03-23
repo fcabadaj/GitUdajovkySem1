@@ -28,11 +28,13 @@ int main()
 		string spz;
 
 		int nosnost;
-		int nazovRegionu;
+		int regVzdvihnutia;
+		int regDorucenia;
 		int sCislo;
 		int typ;
 		int id;
-		int vzdialenost;
+		int vzdVyzdvihnutia;
+		int vzdDorucenia;
 		int hmotnost;
 
 		switch (choice)
@@ -59,27 +61,32 @@ int main()
 			cout << "======================================================= \n";
 			cout << "Zadaj region do ktoreho chces drona pridat \n";
 			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
-			cin >> nazovRegionu;
+			cin >> regDorucenia;
 			cout << "Zadaj seriove cislo drona: \n";
 			cin >> sCislo;
 			cout << "Zadaj typ drona:  1 = TYP I.  2 = TYP II. ";
 			cin >> typ;
-			esystem->pridajDrona(static_cast<EnumRegion>(nazovRegionu), sCislo, typ);
+			esystem->pridajDrona(static_cast<EnumRegion>(regDorucenia), sCislo, typ);
 			break;
 
 		case 4:
 			cout << "PRIDANIE OBJEDNAVKY DO SKLADU \n";
 			cout << "======================================================= \n";
-			cout << "Zadaj region do ktoreho chces drona pridat \n";
-			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
-			cin >> nazovRegionu;
 			cout << "Zadaj id Objednavky (integer) \n";
 			cin >> id;
 			cout << "Zadaj hmotnost Objednavky \n";
 			cin >> hmotnost;
+			cout << "Zadaj region odkial chces objednavku vyzdvihnut \n";
+			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+			cin >> regVzdvihnutia;
+			cout << "Zadaj region kam chces objednavku dorucit \n";
+			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+			cin >> regDorucenia;			
 			cout << "Zadaj vzdialenost miesta vyzdvihnutia od lokalneho skladu \n";
-			cin >> vzdialenost;
-			esystem->pridajObjednavku(id, static_cast<EnumRegion>(nazovRegionu), hmotnost, vzdialenost);
+			cin >> vzdVyzdvihnutia;
+			cout << "Zadaj vzdialenost miesta dorucenia od miestneho lokalneho skladu \n";
+			cin >> vzdDorucenia;
+			esystem->pridajObjednavku(id,hmotnost, static_cast<EnumRegion>(regVzdvihnutia), static_cast<EnumRegion>(regDorucenia), vzdVyzdvihnutia, vzdDorucenia);
 			break;
 
 		case 5:
@@ -91,7 +98,7 @@ int main()
 			break;	
 
 		case 7:
-			esystem->vypisObjednavky();
+			esystem->vypisZamietnuteObjednavky();
 			break;
 
 		default:
@@ -117,7 +124,7 @@ void menu(int &c)
 	cout << "stlac 4 - pre pridanie objednavky \n";
 	cout << "stlac 5 - pre vypis vozidiel \n";
 	cout << "stlac 6 - pre vypis dronov \n";
-	cout << "stlac 7 - pre vypis objednavok \n";	
+	cout << "stlac 7 - pre vypis zamietnutych objednavok \n";	
 	cout << "======================================================= \n";
 	cin >> c;
 	system("CLS");

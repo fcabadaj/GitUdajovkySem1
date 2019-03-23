@@ -288,7 +288,7 @@ namespace structures
 	inline void LinkedList<T>::insert(const T & data, const int index)
 	{
 		DSRoutines::rangeCheckExcept(index, size_ + 1, "Invalid index!");
-		if (index == size_) {
+		if (index == static_cast<int>(size_)) {
 			add(data);
 		}
 		else {
@@ -338,7 +338,7 @@ namespace structures
 				LinkedListItem<T> *pred = getItemAtIndex(index - 1);
 				mazany = pred->getNext();
 				pred->setNext(mazany->getNext());
-				if (index == size_ - 1) {
+				if (index == static_cast<int>(size_) - 1) {
 					last_ = pred;
 				}
 			}

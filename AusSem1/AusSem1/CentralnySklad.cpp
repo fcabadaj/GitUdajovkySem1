@@ -34,8 +34,7 @@ bool CentralnySklad::skontrolujSPZ(string spz)
 		{
 			cout << "Vozidlo s takouto SPZ uz existuje! \n";
 			return false;
-		}
-		
+		}		
 	}
 	return true;
 }
