@@ -17,7 +17,7 @@ public:
 	bool skontrolujSC(int sCislo);
 	bool skontrolujSPZ(string spz);	
 	bool skontrolujZamietnutieObj( Datum *datum, Objednavka *objednavka);
-	bool skontrolujId();
+	bool skontrolujId(Objednavka *objednavka);
 	bool pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady);
 	bool pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int typ);
 	bool pridajObjednavku(int id, int hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia);
@@ -28,5 +28,6 @@ public:
 	void vypisZamietnuteObjednavky();
 	void initRegiony();
 	void pridajHodinu();
+	void vybavObjednavky(Datum *datum);
 };
 

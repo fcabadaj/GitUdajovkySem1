@@ -25,11 +25,12 @@ int main()
 	while (choice != 0)
 	{
 		esystem->vypisDatum();
-		string spz;
+		cout << "======================================================= \n";
 
+		string spz;
 		int nosnost;
-		int regVzdvihnutia;
-		int regDorucenia;
+		int regVzdvihnutia = -1;
+		int regDorucenia = -1;
 		int sCislo;
 		int typ;
 		int id;
@@ -59,9 +60,12 @@ int main()
 		case 3:
 			cout << "PRIDANIE DRONA DO FLOTILY DRONOV \n";
 			cout << "======================================================= \n";
-			cout << "Zadaj region do ktoreho chces drona pridat \n";
-			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
-			cin >> regDorucenia;
+			while (regDorucenia < 0 || regDorucenia > 24)
+			{
+				cout << "Zadaj region do ktoreho chces drona pridat \n";
+				cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+				cin >> regDorucenia;
+			}
 			cout << "Zadaj seriove cislo drona: \n";
 			cin >> sCislo;
 			cout << "Zadaj typ drona:  1 = TYP I.  2 = TYP II. ";
@@ -76,12 +80,18 @@ int main()
 			cin >> id;
 			cout << "Zadaj hmotnost Objednavky \n";
 			cin >> hmotnost;
-			cout << "Zadaj region odkial chces objednavku vyzdvihnut \n";
-			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
-			cin >> regVzdvihnutia;
-			cout << "Zadaj region kam chces objednavku dorucit \n";
-			cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
-			cin >> regDorucenia;			
+			while (regVzdvihnutia < 0 || regVzdvihnutia > 24)
+			{
+				cout << "Zadaj region odkial chces objednavku vyzdvihnut \n";
+				cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+				cin >> regVzdvihnutia;
+			}
+			while (regDorucenia < 0 || regDorucenia > 24)
+			{
+				cout << "Zadaj region kam chces objednavku dorucit \n";
+				cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+				cin >> regDorucenia;
+			}
 			cout << "Zadaj vzdialenost miesta vyzdvihnutia od lokalneho skladu \n";
 			cin >> vzdVyzdvihnutia;
 			cout << "Zadaj vzdialenost miesta dorucenia od miestneho lokalneho skladu \n";

@@ -1,7 +1,7 @@
 #include "structures/heap_monitor.h"
 #include "Objednavka.h"
 
-Objednavka::Objednavka(int id, double hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia, std::string status, Dron *dron, bool dor) :
+Objednavka::Objednavka(int id, double hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia, std::string status, Dron *dron, bool dor, bool prevzata) :
 	id_(id),
 	hmotnost_(hmotnost),
 	regionDorucenia_(regionDorucenia),
@@ -10,7 +10,8 @@ Objednavka::Objednavka(int id, double hmotnost, eRegiony::EnumRegion regionVyzdv
 	vzdOdSkladuDorucenia_(vzdOdSkladuDorucenia),
 	status_(status),
 	dron_(dron),
-	naDorucenie_(dor)
+	naDorucenie_(dor),
+	prevzata_(prevzata)
 {
 }
 

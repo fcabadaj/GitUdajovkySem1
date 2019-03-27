@@ -23,6 +23,7 @@ AoESystem::~AoESystem()
 	datum_ = nullptr;
 }
 
+
 Region AoESystem::getRegion(eRegiony::EnumRegion nazovRegionu)
 {
 	for (unsigned int i = 0; i < regiony_->size(); i++)
@@ -32,8 +33,10 @@ Region AoESystem::getRegion(eRegiony::EnumRegion nazovRegionu)
 			return *(*regiony_)[i];
 		}
 	}
+	return eRegiony::ZA;
 }
 
+//skontroluje unikatnost serioveho cisla drona
 bool AoESystem::skontrolujSC(int sCislo)
 {
 	if (sCislo > 10000 || sCislo < 1)
@@ -49,6 +52,7 @@ bool AoESystem::skontrolujSC(int sCislo)
 	return true;
 }
 
+//skontroluje unikatnost SPZ auta
 bool AoESystem::skontrolujSPZ(string spz)
 {
 	if (spz.length() != 7)
@@ -59,6 +63,7 @@ bool AoESystem::skontrolujSPZ(string spz)
 	return regiony_->operator[](0)->getCentralnySklad()->skontrolujSPZ(spz);
 }
 
+//ak by prijatie objednavky porusilo niektore z podmienok, zamietne objednavku
 bool AoESystem::skontrolujZamietnutieObj(Datum *datum, Objednavka *objednavka)
 {
 	Sklad *skladVyzdvihnutia = nullptr;
@@ -77,6 +82,17 @@ bool AoESystem::skontrolujZamietnutieObj(Datum *datum, Objednavka *objednavka)
 	return false;
 }
 
+//kontrola ID pre objednavku
+bool AoESystem::skontrolujId(Objednavka *objednavka)
+{
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+
+	}
+	return false;
+}
+
+//pridanie vozidla do centralneho skladu
 bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady)
 {
 	if (skontrolujSPZ(spz))
@@ -97,7 +113,7 @@ bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int
 	return false;	
 }
 
-
+//pridavanie drona do skladu daneho regionu, kde sa tiez podla typu drona urcia atributy
 bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int typ)
 {
 	if (skontrolujSC(sCislo))
@@ -151,7 +167,7 @@ bool AoESystem::pridajObjednavku(int id, int hmotnost, eRegiony::EnumRegion regi
 		{
 			if (regiony_->operator[](i)->getNazovRegionu() == regionVyzdvihnutia)
 			{
-				regiony_->operator[](i)->getLokalnySklad()->getObjednavky()->add(objednavka);
+				regiony_->operator[](i)->getLokalnySklad()->getPrijateObjednavky()->add(objednavka);
 				delete datum;
 				cout << "Objednavka bola prijata \n";
 
@@ -202,6 +218,7 @@ void AoESystem::vypisObjednavky()
 	}
 }
 
+//Uvedie array regionov do pociatocneho stavu
 void AoESystem::initRegiony()
 {
 	regiony_->operator[](0) = new Region(eRegiony::ZA, new CentralnySklad());
@@ -213,9 +230,27 @@ void AoESystem::initRegiony()
 	}
 }
 
+/*
+	pridaj hodinu sluzi na pridanie jednej hodiny do systemoveho casu
+	ako aj signalizovanie skladu aby vyslal dronov na vyzdvihnutie alebo dorucenie objednavky
+*/
 void AoESystem::pridajHodinu()
 {
+	Datum *datum = new Datum(*datum_);
+
 	datum_->pridajHodinu();
+
+	vybavObjednavky(datum);
+
+	delete datum;
+}
+
+void AoESystem::vybavObjednavky(Datum *datum)
+{
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		regiony_->operator[](i)->getLokalnySklad()->vybavObjednavky(datum);
+	}
 }
 
 void AoESystem::vypisDatum()
