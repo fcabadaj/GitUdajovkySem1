@@ -1,6 +1,5 @@
 #pragma once
 #include "structures/heap_monitor.h"
-#include "structures/list/array_list.h"
 #include "Vozidlo.h"
 
 using namespace structures;

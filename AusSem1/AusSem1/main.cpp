@@ -20,13 +20,25 @@ int main()
 	Datum* datum = new Datum(1);
 
 	int choice = 155;
+	cout << "======================================================= \n";
+	esystem->vypisDatum();
+
+	esystem->pridajDrona(ZA, 1, 1);
+	esystem->pridajDrona(NO, 2, 1);
+	esystem->pridajDrona(CA, 3, 1);
+
+	esystem->pridajVozidlo(ZA, "ZA123as", 5);
+
+	esystem->pridajObjednavku(1, 1, ZA, NO, 10, 10);
+	esystem->pridajObjednavku(2, 1, ZA, ZA, 10, 10);
+	esystem->pridajObjednavku(3, 1, ZA, CA, 10, 10);
+
 	menu(choice);
 
 	while (choice != 0)
 	{
-		esystem->vypisDatum();
 		cout << "======================================================= \n";
-
+		
 		string spz;
 		int nosnost;
 		int regVzdvihnutia = -1;
@@ -45,6 +57,7 @@ int main()
 
 		case 1:
 			esystem->pridajHodinu();
+			esystem->vypisDatum();
 			break;
 
 		case 2: 			
@@ -54,7 +67,7 @@ int main()
 			cin >> spz;
 			cout << "Zadaj nosnost vozidla v tonach \n";
 			cin >> nosnost;
-			esystem->pridajVozidlo(ZA, spz, nosnost, 15);
+			esystem->pridajVozidlo(ZA, spz, nosnost);
 			break;
 
 		case 3:
@@ -111,6 +124,10 @@ int main()
 			esystem->vypisZamietnuteObjednavky();
 			break;
 
+		case 8:
+			esystem->vypisObjednavky();
+			break;
+
 		default:
 			break;
 		}
@@ -127,14 +144,15 @@ int main()
 void menu(int &c) 
 {	
 	cout << "======================================================= \n";
-	cout << "stlac 0 - pre ukoncenie programu \n";
-	cout << "stlac 1 - pre pridanie hodiny \n";
-	cout << "stlac 2 - pre pridanie vozidla \n";
-	cout << "stlac 3 - pre pridanie drona \n";
-	cout << "stlac 4 - pre pridanie objednavky \n";
-	cout << "stlac 5 - pre vypis vozidiel \n";
-	cout << "stlac 6 - pre vypis dronov \n";
-	cout << "stlac 7 - pre vypis zamietnutych objednavok \n";	
+	cout << "stlac 0 - ukoncenie programu \n";
+	cout << "stlac 1 - pridanie hodiny \n";
+	cout << "stlac 2 - pridanie vozidla \n";
+	cout << "stlac 3 - pridanie drona \n";
+	cout << "stlac 4 - pridanie objednavky \n";
+	cout << "stlac 5 - vypis vozidiel \n";
+	cout << "stlac 6 - vypis dronov \n";	
+	cout << "stlac 7 - vypis zamietnutych objednavok \n";	
+	cout << "stlac 8 - vypis objednavok \n";
 	cout << "======================================================= \n";
 	cin >> c;
 	system("CLS");

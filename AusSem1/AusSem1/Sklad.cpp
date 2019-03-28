@@ -74,9 +74,9 @@ void Sklad::vypisDrony()
 //vypise vsetky prijate objednavky
 void Sklad::vypisObjednavky()
 {
-	for (unsigned int i = 0; i < prijateObjednavky_->size(); i++)
+	for (unsigned int i = 0; i < prevzateObjednavky_->size(); i++)
 	{
-		prijateObjednavky_->operator[](i)->vypisSa();
+		prevzateObjednavky_->operator[](i)->vypisSa();
 	}
 }
 
@@ -122,7 +122,7 @@ void Sklad::vybavObjednavky(Datum *datum)
 	for (unsigned int i = 0; i < prijateObjednavky_->size(); i++)
 	{
 		objednavka = prijateObjednavky_->operator[](i);
-		if (objednavka->getNaDorucenie() && objednavka->getPrevzata() == false)
+		if (objednavka->getPrevzata() == false)
 		{
 			if (najdiNajlepsiehoDrona(objednavka) == nullptr)
 				cout << "Drony nie su k dispozicii \n";
@@ -274,6 +274,45 @@ bool Sklad::stihneVyzdvihnut(Objednavka *objednavka, Datum *datum)
 		return false;
 	else
 		return true;
+}
+
+bool Sklad::odovzdajObjednavkyVozidlu(Vozidlo *vozidlo)
+{
+	//presunutie objednavok ktore nie su na dorucenie v tomto regione do vozidla
+	for (unsigned int i = 0; i < prevzateObjednavky_->size(); i++)
+	{
+		if (prevzateObjednavky_->operator[](i)->getNaDorucenie() == false)
+		{
+			vozidlo->getObjednavky()->add(prevzateObjednavky_->operator[](i));			
+			cout << "Objednavky boli nalozene \n";
+		}
+	}
+
+	for (unsigned int i = 0; i < vozidlo->getObjednavky()->size(); i++)
+	{
+		prevzateObjednavky_->tryRemove(vozidlo->getObjednavky()->operator[](i));
+	}
+
+	return true;
+}
+
+bool Sklad::vyberObjZVozidla(Vozidlo * vozidlo, eRegiony::EnumRegion nazovReg)
+{
+	Objednavka *objednavka;
+
+	for (unsigned int i = 0; i < vozidlo->getObjednavky()->size(); i++)
+	{
+		objednavka = vozidlo->getObjednavky()->operator[](i);
+
+		if (nazovReg == objednavka->getRegionDorucenia())
+		{
+			objednavka->setNaDorucenie(true);
+			prevzateObjednavky_->add(objednavka);
+			cout << "Objednavka s ID: " << objednavka->getId() << " bola dovezena do skladu dorucenia! \n";
+			vozidlo->getObjednavky()->tryRemove(objednavka);
+		}
+	}
+	return false;
 }
 
 // prida drona objednavke pre pristup k jeho atributom 

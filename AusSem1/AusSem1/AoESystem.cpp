@@ -14,7 +14,7 @@ AoESystem::~AoESystem()
 {
 	for (unsigned int i = 0; i < regiony_->size(); i++)
 	{
-		delete (*regiony_)[i];
+		delete regiony_->operator[](i);
 	}
 	delete regiony_;
 	regiony_ = nullptr;
@@ -93,12 +93,12 @@ bool AoESystem::skontrolujId(Objednavka *objednavka)
 }
 
 //pridanie vozidla do centralneho skladu
-bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, int nosnost, int prevadzkoveNaklady)
+bool AoESystem::pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, double nosnost)
 {
 	if (skontrolujSPZ(spz))
 	{
 		Datum *datum = new Datum(*datum_);
-		Vozidlo *vozidlo = new Vozidlo(spz, nosnost, prevadzkoveNaklady, datum);
+		Vozidlo *vozidlo = new Vozidlo(spz, nosnost, datum);
 
 		for (unsigned int i = 0; i < regiony_->size(); i++)
 		{
@@ -199,7 +199,8 @@ bool AoESystem::pridajObjednavku(int id, int hmotnost, eRegiony::EnumRegion regi
 void AoESystem::vypisVozidla()
 {
 	cout << "Vypis vozidiel v centralnom sklade regionu ZA \n";
-	regiony_->operator[](0)->getCentralnySklad()->vypisVozidla();
+	regiony_->operator[](0)->getCentralnySklad()->vypisVozidla();	
+
 }
 
 void AoESystem::vypisDrony()
@@ -233,14 +234,22 @@ void AoESystem::initRegiony()
 /*
 	pridaj hodinu sluzi na pridanie jednej hodiny do systemoveho casu
 	ako aj signalizovanie skladu aby vyslal dronov na vyzdvihnutie alebo dorucenie objednavky
+	a o 21 hodine, signal vozidlam aby porozvazali zasielky
 */
 void AoESystem::pridajHodinu()
 {
 	Datum *datum = new Datum(*datum_);
+	bool vozidlaDorucili = false;
 
 	datum_->pridajHodinu();
 
 	vybavObjednavky(datum);
+
+	if (datum_->getHodina() == 21)
+		vozidlaDorucili = vysliVozidla();
+
+	if (datum_->getHodina() == 7 && vozidlaDorucili)
+		cout << "Objednavky boli uspesne prevezene! \n";
 
 	delete datum;
 }
@@ -251,6 +260,57 @@ void AoESystem::vybavObjednavky(Datum *datum)
 	{
 		regiony_->operator[](i)->getLokalnySklad()->vybavObjednavky(datum);
 	}
+}
+
+bool AoESystem::vysliVozidla()
+{
+	if (regiony_->operator[](0)->getCentralnySklad()->getVozovyPark()->size() == 0)
+	{
+		cout << "Vozidlo nie je k dispozicii, objednavky nebudu prevezene! \n";
+		return false;
+	}
+	
+	double celkNaklady = 0;
+	ArrayList<Vozidlo*> *vozidla;
+	ArrayList<Objednavka*> *objednavkyVSklade;
+	Objednavka *objednavka;
+	vozidla = regiony_->operator[](0)->getCentralnySklad()->getVozovyPark();
+
+	Vozidlo *vozidlo = nullptr;
+
+	if (vozidla->size() == 1)
+	{
+		cout << "Vozidla zacinaju rozvazat objednavky \n";
+		vozidlo = vozidla->operator[](0);
+
+		// objednavky zo vsetkych skladov ktore nie su na dorucenie v danom regione sa odovzdaju vozidlu
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			regiony_->operator[](i)->getLokalnySklad()->odovzdajObjednavkyVozidlu(vozidlo);
+		}
+
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			regiony_->operator[](i)->getLokalnySklad()->vyberObjZVozidla(vozidlo, regiony_->operator[](i)->getNazovRegionu());
+		}
+
+		//aktualizacia celkovych prevadzkovych nakladov pre vozidlo
+		celkNaklady = static_cast<double>(vozidlo->getCelkPrevNaklady());
+		double prevNaklady = vozidlo->getPrevNaklady();
+		double pocetReg = static_cast<double>(vozidlo->getRegiony()->size());
+		double aktNaklady = 2.0 * prevNaklady * pocetReg;
+		celkNaklady += aktNaklady;
+		vozidlo->setCelkPrevNaklady(celkNaklady);
+
+		cout << "Celkove prevadzkove naklady vozidla boli aktualizovane! \n";
+		return true;
+	}
+	else
+	{
+		cout << "Not implemented yet \n";
+		return false;
+	}
+	return false;
 }
 
 void AoESystem::vypisDatum()

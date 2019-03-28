@@ -1,7 +1,7 @@
 #include "structures/heap_monitor.h"
 #include <iostream>
 #include "Dron.h"
-
+#include "Objednavka.h"
 using namespace std;
 
 Dron::Dron(int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dobaNabijania, Datum *datum, Objednavka *objednavka, bool jeVSklade, int bateria, double casD, double casV, double h) :

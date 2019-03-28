@@ -5,6 +5,7 @@
 #include "Objednavka.h"
 #include "Dron.h"
 #include <math.h>
+#include "Vozidlo.h"
 
 using namespace structures;
 
@@ -38,6 +39,8 @@ public:
 	bool skontrolujZamietnutieObj(Datum *datum, Objednavka *objednavka);
 	bool skontrolujRadiusDronov(Objednavka *objednavka);
 	bool stihneVyzdvihnut(Objednavka *objednavka, Datum *datum);
+	bool odovzdajObjednavkyVozidlu(Vozidlo *vozidlo);
+	bool vyberObjZVozidla(Vozidlo *vozidlo, eRegiony::EnumRegion nazovReg);
 	Dron* pridajDronaObjednavke(Objednavka *objednavka);
 	Dron* najdiNajlepsiehoDrona(Objednavka *objednavka);
 	Dron* najskorSkonci(Objednavka *objednavka);

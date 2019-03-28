@@ -26,5 +26,5 @@ Objednavka::~Objednavka()
 
 void Objednavka::vypisSa()
 {
-	std::cout << "Objednavka: Id: " << id_ << " Hmotnost: " << hmotnost_ << " Status: " << status_ << " \n";
+	std::cout << "Objednavka: Id: " << id_ << " Hmotnost: " << hmotnost_ << " NaDorucenie: " << naDorucenie_ << " Prevzata: " << prevzata_ << "Status: " << status_ << " \n";
 }
