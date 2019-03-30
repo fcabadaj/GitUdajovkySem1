@@ -26,5 +26,10 @@ Objednavka::~Objednavka()
 
 void Objednavka::vypisSa()
 {
-	std::cout << "Objednavka: Id: " << id_ << " Hmotnost: " << hmotnost_ << " NaDorucenie: " << naDorucenie_ << " Prevzata: " << prevzata_ << "Status: " << status_ << " \n";
+	std::cout << "Objednavka: Id: " << id_ << " Hmotnost: " << hmotnost_ << " NaDorucenie: " << naDorucenie_ << " Prevzata: " << prevzata_ << " Status: " << status_ << " \n";
+}
+
+string Objednavka::zapisDoSuboru()
+{
+	return  "3 " + to_string(id_) + " " + to_string(static_cast<int>(hmotnost_)) + " " + to_string(static_cast<int>(regionVyzdvihnutia_)) + " " + to_string(static_cast<int>(regionDorucenia_)) + " " + to_string(vzdOdSkladuVyzdvihnutia_) + " " + to_string(vzdOdSkladuDorucenia_) + "\n";
 }

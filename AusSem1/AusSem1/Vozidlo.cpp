@@ -3,6 +3,7 @@
 #include <string>
 #include <iomanip>
 
+
 using namespace structures;
 using namespace eRegiony;
 using namespace std;
@@ -34,7 +35,6 @@ Vozidlo::~Vozidlo()
 	delete regiony_;
 	regiony_ = nullptr;
 
-
 	for (unsigned int i = 0; i < objednavky_->size(); i++)
 	{
 		delete objednavky_->operator[](i);
@@ -47,7 +47,7 @@ void Vozidlo::vypisSa()
 {
 	cout.precision(4);
 	cout.fixed;
-	cout << "SPZ: " << spz_ << " Nosnost: " << nosnost_ << " Celkove Prevadzkove Naklady: "<< celkPrevNaklady_ << " Datum pridania: " << " Den: " << datum_->getDen() << " Hodina: " << datum_->getHodina() << endl;
+	cout << "SPZ: " << spz_ << " Nosnost: " << nosnost_ << " Celkove Prevadzkove Naklady: "<< celkPrevNaklady_ << "€ Datum pridania: " << " Den: " << datum_->getDen() << " Hodina: " << datum_->getHodina() << endl;
 }
 
 void Vozidlo::initRegiony()
@@ -65,4 +65,9 @@ void Vozidlo::vypisRegiony()
 	{
 		cout << regiony_->operator[](i) << endl;
 	}
+}
+
+string Vozidlo::zapisDoSuboru()
+{
+	return to_string(2) + " " +  to_string(0) + " " + spz_ + " " + to_string(static_cast<int>(nosnost_)) + "\n";
 }

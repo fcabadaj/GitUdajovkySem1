@@ -1,5 +1,9 @@
 #include "AoESystem.h"
 #include "structures/heap_monitor.h"
+#include <windows.h>
+#include <fstream>
+#include <cstdlib>
+#include <cmath>
 
 using namespace eRegiony;
 
@@ -11,7 +15,7 @@ AoESystem::AoESystem():
 }
 
 AoESystem::~AoESystem()
-{
+{	
 	for (unsigned int i = 0; i < regiony_->size(); i++)
 	{
 		delete regiony_->operator[](i);
@@ -20,7 +24,7 @@ AoESystem::~AoESystem()
 	regiony_ = nullptr;
 
 	delete datum_;
-	datum_ = nullptr;
+	datum_ = nullptr;	
 }
 
 
@@ -243,13 +247,17 @@ void AoESystem::pridajHodinu()
 
 	datum_->pridajHodinu();
 
-	vybavObjednavky(datum);
+	if (datum_->getHodina() == 21 || datum_->getHodina() == 7)
+		cout << "Objednavky sa v tuto hodinu nevybavuju! \n";
+	else
+		vybavObjednavky(datum);
+		
 
 	if (datum_->getHodina() == 21)
 		vozidlaDorucili = vysliVozidla();
 
 	if (datum_->getHodina() == 7 && vozidlaDorucili)
-		cout << "Objednavky boli uspesne prevezene! \n";
+		cout << "Objednavky boli prevezene do prislusnych skladov! \n";
 
 	delete datum;
 }
@@ -280,7 +288,9 @@ bool AoESystem::vysliVozidla()
 
 	if (vozidla->size() == 1)
 	{
-		cout << "Vozidla zacinaju rozvazat objednavky \n";
+		Sleep(1000);
+		cout << "======================================================= \n";
+		cout << "Vozidlo zbiera objednavky z lokalnych skladov \n";
 		vozidlo = vozidla->operator[](0);
 
 		// objednavky zo vsetkych skladov ktore nie su na dorucenie v danom regione sa odovzdaju vozidlu
@@ -289,10 +299,19 @@ bool AoESystem::vysliVozidla()
 			regiony_->operator[](i)->getLokalnySklad()->odovzdajObjednavkyVozidlu(vozidlo);
 		}
 
+		Sleep(1000);
+		cout << "======================================================= \n";
+		cout << "Objednavky boli nalozene \n";
+		cout << "======================================================= \n";
+
+		//objednavky sa rozvezu do prislusnych skladov
 		for (unsigned int i = 0; i < regiony_->size(); i++)
 		{
 			regiony_->operator[](i)->getLokalnySklad()->vyberObjZVozidla(vozidlo, regiony_->operator[](i)->getNazovRegionu());
 		}
+
+		if (vozidlo->getObjednavky()->size() != 0)
+			cout << "Nepodarilo sa vylozit vsetky objednavky! \n";
 
 		//aktualizacia celkovych prevadzkovych nakladov pre vozidlo
 		celkNaklady = static_cast<double>(vozidlo->getCelkPrevNaklady());
@@ -302,7 +321,9 @@ bool AoESystem::vysliVozidla()
 		celkNaklady += aktNaklady;
 		vozidlo->setCelkPrevNaklady(celkNaklady);
 
+		cout << "======================================================= \n";
 		cout << "Celkove prevadzkove naklady vozidla boli aktualizovane! \n";
+		cout << "======================================================= \n";
 		return true;
 	}
 	else
@@ -325,6 +346,76 @@ void AoESystem::vypisZamietnuteObjednavky()
 		regiony_->operator[](i)->getLokalnySklad()->vypisZamietnuteObjednavky();
 	}
 }
+
+void AoESystem::zapisDoSuboru()
+{
+	ofstream subor;
+	subor.open("subor.txt");
+	eRegiony::EnumRegion nazovRegionu;
+	
+	if (regiony_->operator[](0)->getCentralnySklad()->getVozovyPark()->size() != 0)
+		subor << regiony_->operator[](0)->getCentralnySklad()->getVozovyPark()->operator[](0)->zapisDoSuboru();
+
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		if (regiony_->operator[](i)->getLokalnySklad()->getDrony()->size() != 0)
+		{
+			nazovRegionu = regiony_->operator[](i)->getNazovRegionu();
+			subor << regiony_->operator[](i)->getLokalnySklad()->zapisDrony(nazovRegionu);
+		}
+	}
+
+	for (unsigned int i = 0; i < regiony_->size(); i++)
+	{
+		if (regiony_->operator[](i)->getLokalnySklad()->getPrijateObjednavky()->size() != 0)
+		{
+			nazovRegionu = regiony_->operator[](i)->getNazovRegionu();
+			subor << regiony_->operator[](i)->getLokalnySklad()->zapisObjednavky();
+		}
+	}
+
+	subor.close();
+}
+
+void AoESystem::nacitajZoSuboru()
+{
+	ifstream subor("subor2.txt");
+	int sCislo;
+	int typ;
+	int region;
+	int objekt;
+	string spz;
+	double nosnost;
+	int id;
+	int hmotnost;
+	int regV;
+	int regD;
+	int vzdV;
+	int vzdD;
+
+	while (subor >> objekt)
+	{
+
+		switch (objekt)
+		{
+		case 1:
+			subor >> region >> sCislo >> typ;
+			this->pridajDrona(static_cast<EnumRegion>(region), sCislo, typ);
+			break;
+		case 2:
+			subor >> region >> spz >> nosnost;
+			this->pridajVozidlo(static_cast<EnumRegion>(region), spz, nosnost);
+			break;
+		case 3:
+			subor >> id >> hmotnost >> regV >> regD >> vzdV >> vzdD;
+			this->pridajObjednavku(id, hmotnost, static_cast<EnumRegion>(regV), static_cast<EnumRegion>(regD), vzdV, vzdD);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 
 
 

@@ -29,6 +29,8 @@ public:
 	void initRegiony();
 	void pridajHodinu();
 	void vybavObjednavky(Datum *datum);
+	void zapisDoSuboru();
+	void nacitajZoSuboru();
 	bool vysliVozidla();
 };
 

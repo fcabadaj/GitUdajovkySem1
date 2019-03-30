@@ -6,6 +6,8 @@
 #include "Dron.h"
 #include "AoESystem.h"
 #include "EnumReg.h"
+#include <fstream>
+#include <string>
 
 using namespace structures;
 using namespace std;
@@ -23,15 +25,27 @@ int main()
 	cout << "======================================================= \n";
 	esystem->vypisDatum();
 
+	esystem->nacitajZoSuboru();
+
+	/*
 	esystem->pridajDrona(ZA, 1, 1);
+	esystem->pridajDrona(ZA, 4, 1);
+	esystem->pridajDrona(ZA, 5, 1);
 	esystem->pridajDrona(NO, 2, 1);
 	esystem->pridajDrona(CA, 3, 1);
+	esystem->pridajDrona(LM, 6, 1);
 
 	esystem->pridajVozidlo(ZA, "ZA123as", 5);
 
-	esystem->pridajObjednavku(1, 1, ZA, NO, 10, 10);
-	esystem->pridajObjednavku(2, 1, ZA, ZA, 10, 10);
-	esystem->pridajObjednavku(3, 1, ZA, CA, 10, 10);
+	esystem->pridajObjednavku(1, 1, ZA, NO, 26, 25);
+	esystem->pridajObjednavku(10, 1, ZA, LM, 26, 24);
+	esystem->pridajObjednavku(16, 1, ZA, ZA, 26, 24);
+	esystem->pridajObjednavku(17, 1, ZA, ZA, 26, 23);	
+	esystem->pridajObjednavku(2, 1, ZA, ZA, 26, 22);
+	esystem->pridajObjednavku(5, 1, ZA, ZA, 26, 19);
+	esystem->pridajObjednavku(6, 1, ZA, CA, 26, 18);
+	esystem->pridajObjednavku(8, 1, ZA, ZA, 26, 26);
+	*/
 
 	menu(choice);
 
@@ -43,7 +57,7 @@ int main()
 		int nosnost;
 		int regVzdvihnutia = -1;
 		int regDorucenia = -1;
-		int sCislo;
+		int sCislo = -1;
 		int typ;
 		int id;
 		int vzdVyzdvihnutia;
@@ -57,6 +71,7 @@ int main()
 
 		case 1:
 			esystem->pridajHodinu();
+			cout << "======================================================= \n";
 			esystem->vypisDatum();
 			break;
 
@@ -79,8 +94,17 @@ int main()
 				cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
 				cin >> regDorucenia;
 			}
-			cout << "Zadaj seriove cislo drona: \n";
-			cin >> sCislo;
+			while (sCislo < 1 || sCislo > 9999)
+			{
+				cout << "Zadaj seriove cislo drona: \n";
+				cin >> sCislo;
+
+				if (sCislo < 1 || sCislo > 9999)
+				{
+					cout << "Povoleny rozsah 1-9999 \n";
+				}
+				
+			}			
 			cout << "Zadaj typ drona:  1 = TYP I.  2 = TYP II. ";
 			cin >> typ;
 			esystem->pridajDrona(static_cast<EnumRegion>(regDorucenia), sCislo, typ);
@@ -133,6 +157,11 @@ int main()
 		}
 		menu(choice);
 	}
+
+	cout << "Data boli zapisane do suboru! \n";
+	esystem->zapisDoSuboru();
+	
+	system("PAUSE");
 
 	delete esystem;
 	delete datum;

@@ -8,6 +8,7 @@
 #include "Vozidlo.h"
 
 using namespace structures;
+using namespace std;
 
 class Sklad
 {
@@ -41,8 +42,11 @@ public:
 	bool stihneVyzdvihnut(Objednavka *objednavka, Datum *datum);
 	bool odovzdajObjednavkyVozidlu(Vozidlo *vozidlo);
 	bool vyberObjZVozidla(Vozidlo *vozidlo, eRegiony::EnumRegion nazovReg);
+	bool skontrolujNosnostVozidla(Objednavka *objednavka);
 	Dron* pridajDronaObjednavke(Objednavka *objednavka);
 	Dron* najdiNajlepsiehoDrona(Objednavka *objednavka);
 	Dron* najskorSkonci(Objednavka *objednavka);
+	string zapisDrony(eRegiony::EnumRegion nazov);
+	string zapisObjednavky();
 };
 

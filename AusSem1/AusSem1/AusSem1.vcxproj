@@ -140,6 +140,9 @@
     <ClInclude Include="Sklad.h" />
     <ClInclude Include="Vozidlo.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="subor.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

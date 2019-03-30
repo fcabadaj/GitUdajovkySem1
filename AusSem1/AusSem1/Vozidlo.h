@@ -35,5 +35,6 @@ public:
 	void setCelkPrevNaklady(double d) { this->celkPrevNaklady_ = d; };
 	double getCelkPrevNaklady() { return celkPrevNaklady_; };
 	double getPrevNaklady() { return prevadzkoveNaklady_; };
+	string zapisDoSuboru();
 };
 

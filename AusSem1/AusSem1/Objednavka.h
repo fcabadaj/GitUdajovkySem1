@@ -40,4 +40,5 @@ public:
 	void vypisSa();
 	void setStatus(std::string status) { this->status_ = status; };
 	void setDron(Dron *dron) { this->dron_ = dron; };
+	string zapisDoSuboru();
 };

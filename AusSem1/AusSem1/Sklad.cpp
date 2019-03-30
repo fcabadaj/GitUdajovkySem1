@@ -1,6 +1,7 @@
 #include "structures/heap_monitor.h"
 #include "Sklad.h"
 #include <iostream>
+#include <windows.h>
 
 using namespace std;
 
@@ -74,6 +75,11 @@ void Sklad::vypisDrony()
 //vypise vsetky prijate objednavky
 void Sklad::vypisObjednavky()
 {
+	for (unsigned int i = 0; i < prijateObjednavky_->size(); i++)
+	{
+		prijateObjednavky_->operator[](i)->vypisSa();
+	}
+
 	for (unsigned int i = 0; i < prevzateObjednavky_->size(); i++)
 	{
 		prevzateObjednavky_->operator[](i)->vypisSa();
@@ -93,70 +99,143 @@ void Sklad::vybavObjednavky(Datum *datum)
 {	
 	Dron *najDron = nullptr;
 	Objednavka *objednavka = nullptr;
-	int vzdialenost = 0;
+	int size = static_cast<int>(prevzateObjednavky_->size());
+	ArrayList<Objednavka*> *objNaVymazanie = new ArrayList<Objednavka*>;
 
 	//najskor chcem vybavit vsetky objednavky na dorucenie
-	for (unsigned int i = 0; i < prevzateObjednavky_->size(); i++)
+	for (unsigned int i = 0; i < static_cast<int>(prevzateObjednavky_->size()); i++)
 	{
 		objednavka = prevzateObjednavky_->operator[](i);
 		if (objednavka->getNaDorucenie() && objednavka->getPrevzata())
 		{
-			if (najdiNajlepsiehoDrona(objednavka) == nullptr)
-				cout << "Drony nie su k dispozicii \n";
+			najDron = najdiNajlepsiehoDrona(objednavka);
+
+			if (najDron == nullptr)
+				cout << "Objednavka s ID:" << objednavka->getId() << " nebola dorucena (chybaju drony)\n";
 			else
-			{
-				najDron = najdiNajlepsiehoDrona(objednavka);
+			{				
 				bool dorucil = najDron->vybavDorucenieObjednavky(objednavka);
 				if (dorucil)
 				{
 					cout << "Objednavka s ID " << objednavka->getId() << " bola dorucena! \n";
 					vybaveneObjednavky_->add(objednavka);
-					prevzateObjednavky_->tryRemove(objednavka);
+					objNaVymazanie->add(objednavka);
+					//prevzateObjednavky_->tryRemove(objednavka);
 				}
 				else
-					cout << "Objednavka s ID " << objednavka->getId() << "nebola uspesne dorucena! \n";
+					cout << "Objednavka s ID " << objednavka->getId() << " nebola uspesne dorucena! \n";
 			}
 		}
 	}
 
-	for (unsigned int i = 0; i < prijateObjednavky_->size(); i++)
+	for (unsigned int i = 0; i < objNaVymazanie->size(); i++)
+	{
+		prevzateObjednavky_->tryRemove(objNaVymazanie->operator[](i));
+	}
+	objNaVymazanie->clear();
+
+	size = static_cast<int>(prijateObjednavky_->size());
+	//potom chcem vybavit objednavky na vyzdvihnutie 
+	for (unsigned int i = 0; i < static_cast<int>(prijateObjednavky_->size()); i++)
 	{
 		objednavka = prijateObjednavky_->operator[](i);
 		if (objednavka->getPrevzata() == false)
 		{
-			if (najdiNajlepsiehoDrona(objednavka) == nullptr)
-				cout << "Drony nie su k dispozicii \n";
+			najDron = najdiNajlepsiehoDrona(objednavka);
+
+			if (najDron == nullptr)
+				cout << "Objednavka s ID:" << objednavka->getId() << " nebola vyzdvihnuta (chybaju drony)\n";
 			else
-			{
-				najDron = najdiNajlepsiehoDrona(objednavka);
+			{			
 				bool vyzdvihol = najDron->vybavVyzdvihnutieObjednavky(objednavka);
 
 				if (vyzdvihol)
-				{
-					objednavka->setPrevzata(true);
+				{					
 					cout << "Objednavka s ID " << objednavka->getId() << " bola prevzata a zaradena do objednavok na dorucenie! \n";
 					prevzateObjednavky_->add(objednavka);
-					prijateObjednavky_->tryRemove(objednavka);
+					//prijateObjednavky_->tryRemove(objednavka);
+					objNaVymazanie->add(objednavka);
 				}
 				else
 					cout << "Objednavka s ID " << objednavka->getId() << " nebola prevzata!!! \n";
 			}
 		}
 	}
-	/*
-	TO DO: bateriu a dolet setovat podla niecoho normalneho
-	*/
-	//po vybaveni vsetkych moznych objednavok sa drony vratia do skladu a nabiju sa
+
+	for (unsigned int i = 0; i < objNaVymazanie->size(); i++)
+	{
+		prijateObjednavky_->tryRemove(objNaVymazanie->operator[](i));
+	}
+	objNaVymazanie->clear();
+
+
 	for (unsigned int i = 0; i < drony_->size(); i++)
 	{
+		//ak je dron v sklade
 		drony_->operator[](i)->setJeVSklade(true);
+		double casNabijania = 0.0;
+		double nabitieBaterie = 0.0;
+		int stavBaterie = 0;
+		double dolet = 0;
+		double hodina = 0.6;
 
-		if (drony_->operator[](i)->getTyp() == 1)
+		//dron musi mat registrovanu objednavku
+		if (drony_->operator[](i)->getObjednavku() != nullptr)
 		{
-			drony_->operator[](i)->setBateriu(100);
-			drony_->operator[](i)->setAktDolet(drony_->operator[](i)->getMaxDolet());
+			if (drony_->operator[](i)->getTyp() == 1)
+			{
+				casNabijania = hodina - drony_->operator[](i)->getCelkCasLietania();			
+
+				// cas nabijania v hodinach / 0.05 (0.05 = 3 minuty z hodiny) = + 10%
+				nabitieBaterie = (casNabijania / 0.05) * 10;
+
+				stavBaterie = static_cast<int>(nabitieBaterie);
+				if (drony_->operator[](i)->getStavBaterie() + stavBaterie > 100)
+					stavBaterie = 100;
+
+				drony_->operator[](i)->setBateriu(stavBaterie);
+
+				dolet = ((((static_cast<double>(drony_->operator[](i)->getRychlost()) / 60)*static_cast<double>(drony_->operator[](i)->getDobuLetu())) / 2) * static_cast<double>(stavBaterie)) / 100;
+
+				drony_->operator[](i)->setAktDolet(static_cast<int>(dolet));
+
+			}
+			else if (drony_->operator[](i)->getTyp() == 2)
+			{
+				// 1h - ako dlho dronovi trvalo dorucit objednavku
+				casNabijania = hodina - drony_->operator[](i)->getCelkCasLietania();
+
+				// cas nabijania v hodinach / 0.05 (0.05 = 3 minuty z hodiny) = + 10%
+				nabitieBaterie = (casNabijania / 0.083) * 10;
+
+				stavBaterie = static_cast<int>(nabitieBaterie);
+				if (drony_->operator[](i)->getStavBaterie() + stavBaterie > 100)
+					stavBaterie = 100;
+
+				if (drony_->operator[](i)->getStavBaterie() + stavBaterie < 0)
+					stavBaterie = 0;
+
+				drony_->operator[](i)->setBateriu(stavBaterie);
+
+				dolet = ((((static_cast<double>(drony_->operator[](i)->getRychlost()) / 60)*static_cast<double>(drony_->operator[](i)->getDobuLetu())) / 2) * static_cast<double>(stavBaterie)) / 100;
+
+				drony_->operator[](i)->setAktDolet(static_cast<int>(dolet));
+			}
 		}
 	}	
+
+	//nastavim prevzatym objednavkam bool prevzata na true
+	for (unsigned int i = 0; i < prevzateObjednavky_->size(); i++)
+	{
+		prevzateObjednavky_->operator[](i)->setPrevzata(true);
+	}
+
+	for (unsigned int i = 0; i < drony_->size(); i++)
+	{
+		drony_->operator[](i)->setCelkCasLietania(0);
+	}
+
+	delete objNaVymazanie;
 }
 
 
@@ -226,6 +305,13 @@ bool Sklad::skontrolujZamietnutieObj(Datum *datum, Objednavka *objednavka)
 		return false;
 	}
 	
+	if (!skontrolujNosnostVozidla(objednavka))
+	{
+		status = "Pridanie objednavky by prekrocilo nosnost vozidla! \n";
+		objednavka->setStatus(status);
+		return false;
+	}
+
 	return true;
 }
 
@@ -283,11 +369,11 @@ bool Sklad::odovzdajObjednavkyVozidlu(Vozidlo *vozidlo)
 	{
 		if (prevzateObjednavky_->operator[](i)->getNaDorucenie() == false)
 		{
-			vozidlo->getObjednavky()->add(prevzateObjednavky_->operator[](i));			
-			cout << "Objednavky boli nalozene \n";
+			vozidlo->getObjednavky()->add(prevzateObjednavky_->operator[](i));				
 		}
 	}
 
+	//vymazanie objednavok zo skladu
 	for (unsigned int i = 0; i < vozidlo->getObjednavky()->size(); i++)
 	{
 		prevzateObjednavky_->tryRemove(vozidlo->getObjednavky()->operator[](i));
@@ -299,6 +385,7 @@ bool Sklad::odovzdajObjednavkyVozidlu(Vozidlo *vozidlo)
 bool Sklad::vyberObjZVozidla(Vozidlo * vozidlo, eRegiony::EnumRegion nazovReg)
 {
 	Objednavka *objednavka;
+	ArrayList<Objednavka*> *objNaVymazanie = new ArrayList<Objednavka*>;
 
 	for (unsigned int i = 0; i < vozidlo->getObjednavky()->size(); i++)
 	{
@@ -308,11 +395,49 @@ bool Sklad::vyberObjZVozidla(Vozidlo * vozidlo, eRegiony::EnumRegion nazovReg)
 		{
 			objednavka->setNaDorucenie(true);
 			prevzateObjednavky_->add(objednavka);
+			objNaVymazanie->add(objednavka);
 			cout << "Objednavka s ID: " << objednavka->getId() << " bola dovezena do skladu dorucenia! \n";
-			vozidlo->getObjednavky()->tryRemove(objednavka);
+			Sleep(1000);
+			//vozidlo->getObjednavky()->tryRemove(objednavka);
 		}
 	}
-	return false;
+
+	for (unsigned int i = 0; i < objNaVymazanie->size(); i++)
+	{
+		vozidlo->getObjednavky()->tryRemove(objNaVymazanie->operator[](i));
+	}
+
+	delete objNaVymazanie;
+
+	return true;
+}
+
+bool Sklad::skontrolujNosnostVozidla(Objednavka * objednavka)
+{
+	double celkVahaObj = 0;
+	double nosnost = 2;
+
+	for (unsigned int i = 0; i < prijateObjednavky_->size(); i++)
+	{
+		if (!prijateObjednavky_->operator[](i)->getNaDorucenie())
+		{
+			celkVahaObj += prijateObjednavky_->operator[](i)->getHmotnost();
+		}		
+	}
+
+	for (unsigned int i = 0; i < prevzateObjednavky_->size(); i++)
+	{
+		if (!prevzateObjednavky_->operator[](i)->getNaDorucenie())
+		{
+			celkVahaObj += prevzateObjednavky_->operator[](i)->getHmotnost();
+		}
+	}
+
+	if (celkVahaObj/1000 > nosnost)
+	{
+		return false;
+	}
+	return true;
 }
 
 // prida drona objednavke pre pristup k jeho atributom 
@@ -412,11 +537,11 @@ Dron * Sklad::najdiNajlepsiehoDrona(Objednavka *objednavka)
 	{
 		//z najlepsich dronov ten co ma najviac baterie
 		najlepsiDron = drony_->operator[](0);
-		for (unsigned int i = 0; i < najlepsieDrony->size() - 1; i++)
+		for (unsigned int i = 1; i < drony_->size(); i++)
 		{
-			if (drony_->operator[](i + 1)->getStavBaterie() > najlepsiDron->getStavBaterie())
+			if (drony_->operator[](i)->getStavBaterie() > najlepsiDron->getStavBaterie())
 			{
-				najlepsiDron = drony_->operator[](i + 1);
+				najlepsiDron = drony_->operator[](i);
 			}
 		}
 	}
@@ -430,26 +555,30 @@ Dron * Sklad::najskorSkonci(Objednavka *objednavka)
 {
 	double casDoNavratu = 10000000;
 	Dron *najeplsiDron = nullptr;
+	double hodina = 0.6;
 
 	for (unsigned int i = 0; i < drony_->size(); i++)
 	{
-		if (drony_->operator[](i)->getObjednavku()->getPrevzata())
+		if (!(drony_->operator[](i)->getObjednavku() == nullptr))
 		{
-			if (casDoNavratu > drony_->operator[](i)->getCasDorucenia() && objednavka->getvzdOdSkladuDorucenia() <= drony_->operator[](i)->getAktDolet())
+			if (drony_->operator[](i)->getObjednavku()->getPrevzata())
 			{
-				casDoNavratu = drony_->operator[](i)->getCasDorucenia();
-				najeplsiDron = drony_->operator[](i);
+				if (casDoNavratu > drony_->operator[](i)->getCasDorucenia() && objednavka->getvzdOdSkladuDorucenia() <= drony_->operator[](i)->getAktDolet())
+				{
+					casDoNavratu = drony_->operator[](i)->getCelkCasLietania() + drony_->operator[](i)->getCasDorucenia();
+					najeplsiDron = drony_->operator[](i);
+				}
+
 			}
-			
-		} 
-		else if (!(drony_->operator[](i)->getObjednavku()->getPrevzata()))
-		{
-			if (casDoNavratu > drony_->operator[](i)->getCasVyzdvihnutia() && objednavka->getvzdOdSkladuVyzdvihnutia() <= drony_->operator[](i)->getAktDolet())
+			else if (!(drony_->operator[](i)->getObjednavku()->getPrevzata()))
 			{
-				casDoNavratu = drony_->operator[](i)->getCasDorucenia();
-				najeplsiDron = drony_->operator[](i);
+				if (casDoNavratu > drony_->operator[](i)->getCasVyzdvihnutia() && objednavka->getvzdOdSkladuVyzdvihnutia() <= drony_->operator[](i)->getAktDolet())
+				{
+					casDoNavratu = drony_->operator[](i)->getCelkCasLietania() + drony_->operator[](i)->getCasVyzdvihnutia();
+					najeplsiDron = drony_->operator[](i);
+				}
 			}
-		}	
+		}
 	}
 
 	char input;
@@ -460,7 +589,7 @@ Dron * Sklad::najskorSkonci(Objednavka *objednavka)
 	//ak by sa nenasiel dron co to stine vyzdvihnut do hodiny tak ma moznost zakaznik zrusit objednavku
 	if (!najeplsiDron->getObjednavku()->getPrevzata())
 	{
-		if (casDoNavratu + objednavka->getDron()->getCasDorucenia() > 1 || casDoNavratu + objednavka->getDron()->getCasVyzdvihnutia() > 1)
+		if (casDoNavratu + objednavka->getDron()->getCasDorucenia() > hodina || casDoNavratu + objednavka->getDron()->getCasVyzdvihnutia() > hodina)
 		{			
 			cout << "Vyzdvihnutie objednavky bude trvat viac ako hodinu, chcete objednavku zrusit? \n y(ano)/n(nie)";
 			cin >> input;
@@ -469,4 +598,24 @@ Dron * Sklad::najskorSkonci(Objednavka *objednavka)
 		}
 	}
 	return najeplsiDron;
+}
+
+string Sklad::zapisDrony(eRegiony::EnumRegion nazov)
+{
+	string s;
+	for (unsigned int i = 0; i < drony_->size(); i++)
+	{
+		s += drony_->operator[](i)->zapisDoSuboru(nazov);
+	}
+	return s;
+}
+
+string Sklad::zapisObjednavky()
+{
+	string s;
+	for (unsigned int i = 0; i < prijateObjednavky_->size(); i++)
+	{
+		s += prijateObjednavky_->operator[](i)->zapisDoSuboru();
+	}
+	return s;
 }
