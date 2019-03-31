@@ -123,6 +123,7 @@ void Sklad::statVypisZruseneObjednavky(int denOd, int denDo)
 		if (zruseneObjednavky_->operator[](i)->getDatum()->getDen() >= denOd && zruseneObjednavky_->operator[](i)->getDatum()->getDen() <= denDo)
 		{
 			zruseneObjednavky_->operator[](i)->vypisSa();
+			cout << "======================================================= \n";
 		}
 	}
 }

@@ -25,6 +25,13 @@ private:
 	ArrayList<Objednavka*> *zruseneObjednavky_;
 	int pocetDorucenychZasielok_;
 	int pocetOdoslanychZasielok_;
+
+	bool skontrolujRadiusDronov(Objednavka *objednavka);
+	Dron* pridajDronaObjednavke(Objednavka *objednavka);
+	bool skontrolujNosnostVozidla(Objednavka *objednavka);
+	bool stihneVyzdvihnut(Objednavka *objednavka, Datum *datum);
+	Dron* najskorSkonci(Objednavka *objednavka);
+
 public:
 	Sklad(int pdz = 0, int poz = 0);
 	~Sklad();
@@ -47,14 +54,9 @@ public:
 	void presunPrijateObj();
 	bool skontrolujSCislo(int cislo);
 	bool skontrolujZamietnutieObj(Datum *datum, Objednavka *objednavka);
-	bool skontrolujRadiusDronov(Objednavka *objednavka);
-	bool stihneVyzdvihnut(Objednavka *objednavka, Datum *datum);
 	bool odovzdajObjednavkyVozidlu(Vozidlo *vozidlo);
 	bool vyberObjZVozidla(Vozidlo *vozidlo, eRegiony::EnumRegion nazovReg);
-	bool skontrolujNosnostVozidla(Objednavka *objednavka);
-	Dron* pridajDronaObjednavke(Objednavka *objednavka);
 	Dron* najdiNajlepsiehoDrona(Objednavka *objednavka);
-	Dron* najskorSkonci(Objednavka *objednavka);
 	string zapisDrony(eRegiony::EnumRegion nazov);
 	string zapisObjednavky();
 };

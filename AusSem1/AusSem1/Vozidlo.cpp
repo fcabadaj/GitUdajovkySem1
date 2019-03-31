@@ -8,14 +8,13 @@ using namespace structures;
 using namespace eRegiony;
 using namespace std;
 
-Vozidlo::Vozidlo(string spz, double nosnost, Datum *datum, double prevadzkoveNaklady, double aktZataz, double celk, int celkKm) :
+Vozidlo::Vozidlo(string spz, double nosnost, Datum *datum, double prevadzkoveNaklady, double celk, int celkKm) :
 	spz_(spz),
 	nosnost_(nosnost),
 	prevadzkoveNaklady_(prevadzkoveNaklady),
 	datum_(datum),
 	regiony_(new Array<EnumRegion*>(25)),
 	objednavky_(new ArrayList<Objednavka*>),
-	aktZataz_(aktZataz),
 	celkPrevNaklady_(celk),
 	celkPocetKilometrov_(celkKm)
 {

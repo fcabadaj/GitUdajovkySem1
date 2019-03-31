@@ -18,17 +18,17 @@ private:
 	double nosnost_;
 	double prevadzkoveNaklady_;
 	double celkPrevNaklady_;
-	double aktZataz_;
 	int celkPocetKilometrov_;
 	Datum *datum_;
 	ArrayList<Objednavka*> *objednavky_;
 	Array<EnumRegion*> *regiony_;
 
+	void initRegiony();
+
 public:
-	Vozidlo(string spz, double nosnost, Datum *datum, double prevadzkoveNaklady = 15.0, double aktZataz = 0.0, double celk = 0.00000, int celkKm = 0);
+	Vozidlo(string spz, double nosnost, Datum *datum, double prevadzkoveNaklady = 15.0,double celk = 0.00000, int celkKm = 0);
 	~Vozidlo();
 	void vypisSa();
-	void initRegiony();
 	void vypisRegiony();
 	Array<EnumRegion*>* getRegiony() { return regiony_; };
 	ArrayList<Objednavka*>* getObjednavky() { return objednavky_; };

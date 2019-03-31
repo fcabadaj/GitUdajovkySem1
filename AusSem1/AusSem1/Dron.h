@@ -29,11 +29,12 @@ private:
 	int aktDolet_;
 	double nalietaneHodiny_;
 	double celkCasLietania_;
+	void odratajBaterku(int vzdialenost);
+	void initDolet();
 
 public:
 	Dron(int sCislo, int typ, int nosnost, int rychlost, int dobaLetu, int dobaNabijania, Datum *datum, Objednavka *objednavka = nullptr, bool jeVSklade = true, int bateria = 100, double casD = 0, double casV = 0, double h = 0, double celkCasLietania_ = 0.0);
 	~Dron();
-	void initDolet();
 	int getSCislo() { return sCislo_; };
 	int getTyp() { return typ_; };
 	int getRychlost() { return rychlost_; };
@@ -53,7 +54,6 @@ public:
 	void setCasVyzdvihnutia(double cas) { this->casVyzdvihnuta_ = cas; };
 	void setCasDorucenia(double cas) { this->casDorucenia_ = cas; };
 	void setJeVSklade(bool b) { this->jeVSklade_ = b; };
-	void odratajBaterku(int vzdialenost);
 	void setObjednavka(Objednavka *obj) { this->objednavka_ = obj; };
 	void setBateriu(int c) { this->bateriaPercenta_ = c; };
 	void setAktDolet(int d) { this->aktDolet_ = d; };
