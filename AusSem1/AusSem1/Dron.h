@@ -41,6 +41,7 @@ public:
 	double getCasVyzdvihnutia() { return casVyzdvihnuta_; };
 	double getCasDorucenia() { return casDorucenia_; };
 	double getCelkCasLietania() { return celkCasLietania_; };
+	double getNalietaneHodiny() { return nalietaneHodiny_/0.6; }
 	bool getJeVSklade() { return jeVSklade_; };
 	bool vybavDorucenieObjednavky(Objednavka *objednavka);
 	bool vybavVyzdvihnutieObjednavky(Objednavka *objednavka);

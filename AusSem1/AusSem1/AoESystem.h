@@ -14,13 +14,14 @@ public:
 	AoESystem();
 	~AoESystem();
 	Region getRegion(eRegiony::EnumRegion nazovRegionu);
+	Datum* getDatum() { return datum_; };
 	bool skontrolujSC(int sCislo);
 	bool skontrolujSPZ(string spz);	
 	bool skontrolujZamietnutieObj( Datum *datum, Objednavka *objednavka);
 	bool skontrolujId(Objednavka *objednavka);
 	bool pridajVozidlo(eRegiony::EnumRegion nazovRegionu, string spz, double nosnost);
 	bool pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int typ);
-	bool pridajObjednavku(int id, int hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia);
+	bool pridajObjednavku(int id, double hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia);
 	void vypisVozidla();
 	void vypisDrony();
 	void vypisObjednavky();
@@ -31,6 +32,9 @@ public:
 	void vybavObjednavky(Datum *datum);
 	void zapisDoSuboru();
 	void nacitajZoSuboru();
+	void prejdiNa21H();
+	void vypisStatistik();
 	bool vysliVozidla();
+	string getMenoRegionu(int reg);
 };
 

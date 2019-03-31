@@ -5,12 +5,15 @@
 
 using namespace std;
 
-Sklad::Sklad():
+Sklad::Sklad(int pdz, int poz):
 	drony_(new ArrayList<Dron*>),
 	prijateObjednavky_(new ArrayList<Objednavka*>),
 	zamietnuteObjednavky_(new ArrayList<Objednavka*>),
 	prevzateObjednavky_(new ArrayList<Objednavka*>),
-	vybaveneObjednavky_(new ArrayList<Objednavka*>)
+	vybaveneObjednavky_(new ArrayList<Objednavka*>),
+	zruseneObjednavky_(new ArrayList<Objednavka*>),
+	pocetDorucenychZasielok_(pdz),
+	pocetOdoslanychZasielok_(poz)
 {
 }
 
@@ -50,6 +53,13 @@ Sklad::~Sklad()
 	}
 	delete vybaveneObjednavky_;
 	vybaveneObjednavky_ = nullptr;
+
+	for (unsigned int i = 0; i < zruseneObjednavky_->size(); i++)
+	{
+		delete zruseneObjednavky_->operator[](i);
+	}
+	delete zruseneObjednavky_;
+	zruseneObjednavky_ = nullptr;
 }
 
 //vrati objednavku podla ID
@@ -93,6 +103,45 @@ void Sklad::vypisZamietnuteObjednavky()
 	{
 		zamietnuteObjednavky_->operator[](i)->vypisSa();
 	}
+}
+
+void Sklad::statVypisZamietnuteObjednavky(int denOd, int denDo)
+{
+	for (unsigned int i = 0; i < zamietnuteObjednavky_->size(); i++)
+	{
+		if (zamietnuteObjednavky_->operator[](i)->getDatum()->getDen() >= denOd && zamietnuteObjednavky_->operator[](i)->getDatum()->getDen() <= denDo)
+		{
+			zamietnuteObjednavky_->operator[](i)->vypisSa();
+		}		
+	}
+}
+
+void Sklad::statVypisZruseneObjednavky(int denOd, int denDo)
+{
+	for (unsigned int i = 0; i < zruseneObjednavky_->size(); i++)
+	{
+		if (zruseneObjednavky_->operator[](i)->getDatum()->getDen() >= denOd && zruseneObjednavky_->operator[](i)->getDatum()->getDen() <= denDo)
+		{
+			zruseneObjednavky_->operator[](i)->vypisSa();
+		}
+	}
+}
+
+void Sklad::statVypisDrony()
+{
+	double nalietaneHodiny1 = 0.0;
+	double nalietaneHodiny2 = 0.0;
+
+	for (unsigned int i = 0; i < drony_->size(); i++)
+	{
+		if (drony_->operator[](i)->getTyp() == 1)
+			nalietaneHodiny1 += drony_->operator[](i)->getNalietaneHodiny();
+		else
+			nalietaneHodiny2 += drony_->operator[](i)->getNalietaneHodiny();
+	}
+	cout << "Drony typu I. nalietali: " << nalietaneHodiny1 << " hodin \n";
+	cout << "Drony typu II. nalietali: " << nalietaneHodiny2 << " hodin \n";
+	cout << "======================================================= \n";
 }
 
 void Sklad::vybavObjednavky(Datum *datum)
@@ -369,7 +418,8 @@ bool Sklad::odovzdajObjednavkyVozidlu(Vozidlo *vozidlo)
 	{
 		if (prevzateObjednavky_->operator[](i)->getNaDorucenie() == false)
 		{
-			vozidlo->getObjednavky()->add(prevzateObjednavky_->operator[](i));				
+			vozidlo->getObjednavky()->add(prevzateObjednavky_->operator[](i));	
+			pocetOdoslanychZasielok_++;
 		}
 	}
 
@@ -395,9 +445,11 @@ bool Sklad::vyberObjZVozidla(Vozidlo * vozidlo, eRegiony::EnumRegion nazovReg)
 		{
 			objednavka->setNaDorucenie(true);
 			prevzateObjednavky_->add(objednavka);
+			pocetDorucenychZasielok_++;
 			objNaVymazanie->add(objednavka);
 			cout << "Objednavka s ID: " << objednavka->getId() << " bola dovezena do skladu dorucenia! \n";
-			Sleep(1000);
+			Sleep(100);
+
 			//vozidlo->getObjednavky()->tryRemove(objednavka);
 		}
 	}
@@ -586,6 +638,7 @@ Dron * Sklad::najskorSkonci(Objednavka *objednavka)
 	if (najeplsiDron == nullptr)
 		return nullptr;
 
+	string status;
 	//ak by sa nenasiel dron co to stine vyzdvihnut do hodiny tak ma moznost zakaznik zrusit objednavku
 	if (!najeplsiDron->getObjednavku()->getPrevzata())
 	{
@@ -594,7 +647,14 @@ Dron * Sklad::najskorSkonci(Objednavka *objednavka)
 			cout << "Vyzdvihnutie objednavky bude trvat viac ako hodinu, chcete objednavku zrusit? \n y(ano)/n(nie)";
 			cin >> input;
 			if (input == 'y')
+			{
+				status = "Objednavka bola zrusena uzivatelom";
+				objednavka->setStatus(status);
+				zruseneObjednavky_->add(objednavka);
+				prijateObjednavky_->tryRemove(objednavka);
 				return nullptr;
+			}
+			
 		}
 	}
 	return najeplsiDron;

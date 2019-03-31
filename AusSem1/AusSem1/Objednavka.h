@@ -22,9 +22,10 @@ private:
 	bool naDorucenie_;
 	//prevzata signalizuje ci sa objednavka bude vyzdvihovat alebo dorucovat
 	bool prevzata_;
+	Datum *datum_;
 
 public:
-	Objednavka(int id, double hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia, std::string status = "Prijata", Dron *dron = nullptr, bool dor = false, bool prevzata = false);
+	Objednavka(int id, double hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia, Datum *datum, std::string status = "Prijata", Dron *dron = nullptr, bool dor = false, bool prevzata = false);
 	~Objednavka();
 	eRegiony::EnumRegion getRegionDorucenia() { return regionDorucenia_; };
 	eRegiony::EnumRegion getRegionVyzdvihnutia() { return regionVyzdvihnutia_; };
@@ -41,4 +42,5 @@ public:
 	void setStatus(std::string status) { this->status_ = status; };
 	void setDron(Dron *dron) { this->dron_ = dron; };
 	string zapisDoSuboru();
+	Datum* getDatum() { return datum_; };
 };

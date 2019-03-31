@@ -19,12 +19,13 @@ private:
 	double prevadzkoveNaklady_;
 	double celkPrevNaklady_;
 	double aktZataz_;
+	int celkPocetKilometrov_;
 	Datum *datum_;
 	ArrayList<Objednavka*> *objednavky_;
 	Array<EnumRegion*> *regiony_;
 
 public:
-	Vozidlo(string spz, double nosnost, Datum *datum, double prevadzkoveNaklady = 15.0, double aktZataz = 0.0, double celk = 0.00000);
+	Vozidlo(string spz, double nosnost, Datum *datum, double prevadzkoveNaklady = 15.0, double aktZataz = 0.0, double celk = 0.00000, int celkKm = 0);
 	~Vozidlo();
 	void vypisSa();
 	void initRegiony();
@@ -33,8 +34,10 @@ public:
 	ArrayList<Objednavka*>* getObjednavky() { return objednavky_; };
 	string getSPZ() { return spz_; };
 	void setCelkPrevNaklady(double d) { this->celkPrevNaklady_ = d; };
+	void setCelkPocetKilometrov(int i) { this->celkPocetKilometrov_ = i; };
 	double getCelkPrevNaklady() { return celkPrevNaklady_; };
 	double getPrevNaklady() { return prevadzkoveNaklady_; };
+	int getCelkPocetKilometrov() { return celkPocetKilometrov_; };
 	string zapisDoSuboru();
 };
 

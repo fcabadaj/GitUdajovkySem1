@@ -159,11 +159,12 @@ bool AoESystem::pridajDrona(eRegiony::EnumRegion nazovRegionu, int sCislo, int t
 	return false;
 }
 
-bool AoESystem::pridajObjednavku(int id, int hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia)
+bool AoESystem::pridajObjednavku(int id, double hmotnost, eRegiony::EnumRegion regionVyzdvihnutia, eRegiony::EnumRegion regionDorucenia, int vzdOdSkladuVyzdvihnutia, int vzdOdSkladuDorucenia)
 {
 	bool dorucenie = false;
 	Datum *datum = new Datum(*datum_);
-	Objednavka *objednavka = new Objednavka(id,hmotnost,regionVyzdvihnutia,regionDorucenia,vzdOdSkladuVyzdvihnutia,vzdOdSkladuDorucenia);
+
+	Objednavka *objednavka = new Objednavka(id,hmotnost,regionVyzdvihnutia,regionDorucenia,vzdOdSkladuVyzdvihnutia,vzdOdSkladuDorucenia, datum);
 
 	if (skontrolujZamietnutieObj(datum, objednavka))
 	{
@@ -172,13 +173,12 @@ bool AoESystem::pridajObjednavku(int id, int hmotnost, eRegiony::EnumRegion regi
 			if (regiony_->operator[](i)->getNazovRegionu() == regionVyzdvihnutia)
 			{
 				regiony_->operator[](i)->getLokalnySklad()->getPrijateObjednavky()->add(objednavka);
-				delete datum;
 				cout << "Objednavka bola prijata \n";
 
 				if (regionVyzdvihnutia == regionDorucenia)
 					dorucenie = true;
 
-					objednavka->setNaDorucenie(dorucenie);
+				objednavka->setNaDorucenie(dorucenie);
 
 				return true;
 			}
@@ -191,12 +191,10 @@ bool AoESystem::pridajObjednavku(int id, int hmotnost, eRegiony::EnumRegion regi
 		if (regiony_->operator[](i)->getNazovRegionu() == regionVyzdvihnutia)
 		{
 			regiony_->operator[](i)->getLokalnySklad()->getZamietnuteObjednavky()->add(objednavka);
-			delete datum;
 			cout << "Objednavka bola zamietnuta!! \n";
 			return false;
 		}
-	}
-	
+	}	
 	return false;
 }
 
@@ -288,7 +286,7 @@ bool AoESystem::vysliVozidla()
 
 	if (vozidla->size() == 1)
 	{
-		Sleep(1000);
+		Sleep(200);
 		cout << "======================================================= \n";
 		cout << "Vozidlo zbiera objednavky z lokalnych skladov \n";
 		vozidlo = vozidla->operator[](0);
@@ -299,7 +297,7 @@ bool AoESystem::vysliVozidla()
 			regiony_->operator[](i)->getLokalnySklad()->odovzdajObjednavkyVozidlu(vozidlo);
 		}
 
-		Sleep(1000);
+		Sleep(200);
 		cout << "======================================================= \n";
 		cout << "Objednavky boli nalozene \n";
 		cout << "======================================================= \n";
@@ -321,6 +319,10 @@ bool AoESystem::vysliVozidla()
 		celkNaklady += aktNaklady;
 		vozidlo->setCelkPrevNaklady(celkNaklady);
 
+		int pocetRegionov = static_cast<int>(vozidlo->getRegiony()->size());
+		int kilometre = (20 * 2 * pocetRegionov) + vozidlo->getCelkPocetKilometrov();
+		vozidlo->setCelkPocetKilometrov(kilometre);
+
 		cout << "======================================================= \n";
 		cout << "Celkove prevadzkove naklady vozidla boli aktualizovane! \n";
 		cout << "======================================================= \n";
@@ -333,6 +335,7 @@ bool AoESystem::vysliVozidla()
 	}
 	return false;
 }
+
 
 void AoESystem::vypisDatum()
 {
@@ -350,7 +353,7 @@ void AoESystem::vypisZamietnuteObjednavky()
 void AoESystem::zapisDoSuboru()
 {
 	ofstream subor;
-	subor.open("subor.txt");
+	subor.open("output.txt");
 	eRegiony::EnumRegion nazovRegionu;
 	
 	if (regiony_->operator[](0)->getCentralnySklad()->getVozovyPark()->size() != 0)
@@ -379,7 +382,7 @@ void AoESystem::zapisDoSuboru()
 
 void AoESystem::nacitajZoSuboru()
 {
-	ifstream subor("subor2.txt");
+	ifstream subor("input.txt");
 	int sCislo;
 	int typ;
 	int region;
@@ -395,7 +398,6 @@ void AoESystem::nacitajZoSuboru()
 
 	while (subor >> objekt)
 	{
-
 		switch (objekt)
 		{
 		case 1:
@@ -414,6 +416,151 @@ void AoESystem::nacitajZoSuboru()
 			break;
 		}
 	}
+}
+
+void AoESystem::prejdiNa21H()
+{
+	do
+	{
+		pridajHodinu();
+		Sleep(50);
+	} while (datum_->getHodina() != 21);
+}
+
+void AoESystem::vypisStatistik()
+{
+	system("CLS");
+	int i = 0;
+	cout << "======================================================= \n";
+	cout << "stlac 0 - region do ktoreho bolo dorucenych najviac zasielok \n";
+	cout << "stlac 1 - region z ktoreho bolo odoslanych najviac zasielok \n";
+	cout << "stlac 2 - vypis zamietnutych objednavok \n";
+	cout << "stlac 3 - vypis zrusenych objednavok \n";
+	cout << "stlac 4 - vypis celkoveho poctu dorucenych zasielok\n";
+	cout << "stlac 5 - vypis celkoveho poctu najazdenych kilometrov vozidiel\n";
+	cout << "stlac 6 - vypis celkoveho poctu nalietanych hodin jednotlivych typov dronov\n";
+	cout << "stlac 7 - PRE NAVRAT DO HLAVNEHO MENU \n";
+	cout << "======================================================= \n";
+	cin >> i;
+
+	int denOd = 0;
+	int denDo = 0;
+	int reg = 0;
+	int pocetZasielok = 0;
+	double nalietaneHodiny = 0;
+	Region *najlepsi = regiony_->operator[](0);
+	int index = 0;
+
+	switch (i)
+	{
+	case 0:
+		for (unsigned int i = 1; i < regiony_->size(); i++)
+		{
+			if (najlepsi->getLokalnySklad()->getPocetDorucenychZasielok() < regiony_->operator[](i)->getLokalnySklad()->getPocetDorucenychZasielok())
+			{
+				najlepsi = regiony_->operator[](i);
+				index = i;
+			}
+		}
+		cout << "Najviac dorucenych zasielok ma region: " << getMenoRegionu(index) << " " << najlepsi->getLokalnySklad()->getPocetDorucenychZasielok() << endl;
+
+		break;
+
+	case 1:
+		for (unsigned int i = 1; i < regiony_->size(); i++)
+		{
+			if (najlepsi->getLokalnySklad()->getPocetOdoslanychZasielok() < regiony_->operator[](i)->getLokalnySklad()->getPocetOdoslanychZasielok())
+			{
+				najlepsi = regiony_->operator[](i);
+				index = i;
+			}
+		}
+		cout << "Najviac odoslanych zasielok ma region: " << getMenoRegionu(index) << " " << najlepsi->getLokalnySklad()->getPocetOdoslanychZasielok() << endl;
+
+		break;
+	case 2:
+		cout << "vypis zamietnutych objednavok \n";
+		cout << "======================================================= \n";
+		cout << "Zadaj den od: \n";
+		cin >> denOd;
+		cout << "Zadaj den do: \n";
+		cin >> denDo;
+		cout << "Zadaj region: \n";
+		cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+		cin >> reg;
+		cout << "V regione " << getMenoRegionu(reg) << " su tieto zamietnute objednavky" << endl;
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			if (regiony_->operator[](i)->getNazovRegionu() == static_cast<eRegiony::EnumRegion>(reg))
+			{
+				if (regiony_->operator[](i)->getLokalnySklad()->getZamietnuteObjednavky()->size() == 0)
+					cout << "V zadanom regione nie su ziadne zamietnute objednavky \n";
+				else
+				regiony_->operator[](i)->getLokalnySklad()->statVypisZamietnuteObjednavky(denOd, denDo);
+			}
+		}
+
+		break;
+	case 3:
+		cout << "vypis zrusenych objednavok \n";
+		cout << "======================================================= \n";
+		cout << "Zadaj den od: \n";
+		cin >> denOd;
+		cout << "Zadaj den do: \n";
+		cin >> denDo;
+		cout << "Zadaj region: \n";
+		cout << "0 = ZA, 1 = MA, 2 = BA, 3 = TT, 4 = KN, 5 = LV \n 6 = TN, 7 = PD,  8 = MT, 9 = NR, 10 = CA, 11 = NO \n 12 = LM, 13 = BB, 14 = ZV, 15 = KA, 16 = LC, 17 = RA \n 18 = PP, 19 = SL, 20 = SN, 21 = KE, 22 = PO, 23 = HE, 24 = MI \n";
+		cin >> reg;
+		cout << "V regione " << getMenoRegionu(reg) << " su tieto zamietnute objednavky" << endl;
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			if (regiony_->operator[](i)->getNazovRegionu() == static_cast<eRegiony::EnumRegion>(reg))
+			{
+				if (regiony_->operator[](i)->getLokalnySklad()->getZruseneObjednavky()->size() == 0)
+					cout << "V zadanom regione nie su ziadne zamietnute objednavky \n";
+				else
+					regiony_->operator[](i)->getLokalnySklad()->statVypisZruseneObjednavky(denOd, denDo);
+			}
+		}
+		break;
+	case 4:		
+		cout << "vypis celkoveho poctu dorucenych zasielok\n";
+		cout << "======================================================= \n";
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			pocetZasielok += static_cast<int>(regiony_->operator[](i)->getLokalnySklad()->getVybaveneObjednavky()->size());
+		}
+		cout << "Celkovy pocet dorucenych zasielok je: " << pocetZasielok << endl;
+		break;
+	case 5:
+		cout << "vypis celkoveho poctu najazdenych kilometrov vozidiel\n";
+		cout << "======================================================= \n";
+		if (regiony_->operator[](0)->getCentralnySklad()->getVozovyPark()->size() != 0)
+			cout << "Vozidla spolu najazdili: " << regiony_->operator[](0)->getCentralnySklad()->getVozovyPark()->operator[](0)->getCelkPocetKilometrov() << endl;
+		else
+			cout << "Ziadne vozidlo nie je v tomto systeme zaregistrovane \n";
+		
+		break;
+	case 6:
+		cout << "vypis celkoveho poctu nalietanych hodin jednotlivych typov dronov\n";
+		cout << "======================================================= \n";
+		for (unsigned int i = 0; i < regiony_->size(); i++)
+		{
+			cout << "Region: " << getMenoRegionu(i) << endl;
+			regiony_->operator[](i)->getLokalnySklad()->statVypisDrony();
+		}
+		break;
+	case 7:
+		break;
+	default:
+		break;
+	}
+}
+
+string AoESystem::getMenoRegionu(int reg)
+{
+	string mena[25]{ "ZA","MA","BA","TT","KN","LV","TN","PD","MT","NR","CA","NO","LM","BB","ZV","KA","LC","RA","PP","SL","SN","KE","PO","HE","MI" };
+	return mena[reg];
 }
 
 

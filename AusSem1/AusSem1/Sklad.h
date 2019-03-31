@@ -22,18 +22,27 @@ private:
 	ArrayList<Objednavka*> *prevzateObjednavky_;
 	//vybavene objednavky
 	ArrayList<Objednavka*> *vybaveneObjednavky_;
+	ArrayList<Objednavka*> *zruseneObjednavky_;
+	int pocetDorucenychZasielok_;
+	int pocetOdoslanychZasielok_;
 public:
-	Sklad();
+	Sklad(int pdz = 0, int poz = 0);
 	~Sklad();
 	ArrayList<Dron*>* getDrony() { return drony_; }
 	ArrayList<Objednavka*>* getZamietnuteObjednavky() { return zamietnuteObjednavky_; };
 	//Objednavky su v arrayListe pretoze pri mojej logike vypoctu zamietnutia bodu a) potrebujem prejst vsetky objednavky
 	ArrayList<Objednavka*>* getPrijateObjednavky() { return prijateObjednavky_; }
 	ArrayList<Objednavka*>* getVybaveneObjednavky() { return vybaveneObjednavky_; }
+	ArrayList<Objednavka*>* getZruseneObjednavky() { return zruseneObjednavky_; }
 	Objednavka* getObjednavka(int id);
+	int getPocetDorucenychZasielok() { return pocetDorucenychZasielok_; };
+	int getPocetOdoslanychZasielok() { return pocetOdoslanychZasielok_; };
 	void vypisDrony();
 	void vypisObjednavky();
 	void vypisZamietnuteObjednavky();
+	void statVypisZamietnuteObjednavky(int DenOd, int denDo);
+	void statVypisZruseneObjednavky(int denOd, int denDo);
+	void statVypisDrony();
 	void vybavObjednavky(Datum *datum);
 	void presunPrijateObj();
 	bool skontrolujSCislo(int cislo);

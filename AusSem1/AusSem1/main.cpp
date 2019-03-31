@@ -19,33 +19,12 @@ int main()
 {
 	initHeapMonitor();
 	AoESystem *esystem = new AoESystem();
-	Datum* datum = new Datum(1);
 
 	int choice = 155;
 	cout << "======================================================= \n";
 	esystem->vypisDatum();
 
-	esystem->nacitajZoSuboru();
-
-	/*
-	esystem->pridajDrona(ZA, 1, 1);
-	esystem->pridajDrona(ZA, 4, 1);
-	esystem->pridajDrona(ZA, 5, 1);
-	esystem->pridajDrona(NO, 2, 1);
-	esystem->pridajDrona(CA, 3, 1);
-	esystem->pridajDrona(LM, 6, 1);
-
-	esystem->pridajVozidlo(ZA, "ZA123as", 5);
-
-	esystem->pridajObjednavku(1, 1, ZA, NO, 26, 25);
-	esystem->pridajObjednavku(10, 1, ZA, LM, 26, 24);
-	esystem->pridajObjednavku(16, 1, ZA, ZA, 26, 24);
-	esystem->pridajObjednavku(17, 1, ZA, ZA, 26, 23);	
-	esystem->pridajObjednavku(2, 1, ZA, ZA, 26, 22);
-	esystem->pridajObjednavku(5, 1, ZA, ZA, 26, 19);
-	esystem->pridajObjednavku(6, 1, ZA, CA, 26, 18);
-	esystem->pridajObjednavku(8, 1, ZA, ZA, 26, 26);
-	*/
+	Datum *datum = new Datum(2,8);
 
 	menu(choice);
 
@@ -62,7 +41,7 @@ int main()
 		int id;
 		int vzdVyzdvihnutia;
 		int vzdDorucenia;
-		int hmotnost;
+		double hmotnost;
 
 		switch (choice)
 		{
@@ -75,7 +54,7 @@ int main()
 			esystem->vypisDatum();
 			break;
 
-		case 2: 			
+		case 3: 			
 			cout << "PRIDANIE VOZIDLA DO VOZOVEHO PARKU\n";
 			cout << "======================================================= \n";
 			cout << "Zadaj 7 znakovu SPZ: \n";
@@ -85,7 +64,7 @@ int main()
 			esystem->pridajVozidlo(ZA, spz, nosnost);
 			break;
 
-		case 3:
+		case 4:
 			cout << "PRIDANIE DRONA DO FLOTILY DRONOV \n";
 			cout << "======================================================= \n";
 			while (regDorucenia < 0 || regDorucenia > 24)
@@ -110,7 +89,7 @@ int main()
 			esystem->pridajDrona(static_cast<EnumRegion>(regDorucenia), sCislo, typ);
 			break;
 
-		case 4:
+		case 5:
 			cout << "PRIDANIE OBJEDNAVKY DO SKLADU \n";
 			cout << "======================================================= \n";
 			cout << "Zadaj id Objednavky (integer) \n";
@@ -136,20 +115,27 @@ int main()
 			esystem->pridajObjednavku(id,hmotnost, static_cast<EnumRegion>(regVzdvihnutia), static_cast<EnumRegion>(regDorucenia), vzdVyzdvihnutia, vzdDorucenia);
 			break;
 
-		case 5:
+		case 6:
 			esystem->vypisVozidla();
 			break;
 
-		case 6:
+		case 7:
 			esystem->vypisDrony();
 			break;	
 
-		case 7:
-			esystem->vypisZamietnuteObjednavky();
+		case 9:
+			esystem->vypisObjednavky();
 			break;
 
+		case 2:
+			esystem->prejdiNa21H();
+			break;
+
+		case 10:
+			esystem->nacitajZoSuboru();
+			break;
 		case 8:
-			esystem->vypisObjednavky();
+			esystem->vypisStatistik();
 			break;
 
 		default:
@@ -175,13 +161,15 @@ void menu(int &c)
 	cout << "======================================================= \n";
 	cout << "stlac 0 - ukoncenie programu \n";
 	cout << "stlac 1 - pridanie hodiny \n";
-	cout << "stlac 2 - pridanie vozidla \n";
-	cout << "stlac 3 - pridanie drona \n";
-	cout << "stlac 4 - pridanie objednavky \n";
-	cout << "stlac 5 - vypis vozidiel \n";
-	cout << "stlac 6 - vypis dronov \n";	
-	cout << "stlac 7 - vypis zamietnutych objednavok \n";	
-	cout << "stlac 8 - vypis objednavok \n";
+	cout << "stlac 2 - prejdi na 21:00 h \n";
+	cout << "stlac 3 - pridanie vozidla \n";
+	cout << "stlac 4 - pridanie drona \n";
+	cout << "stlac 5 - pridanie objednavky \n";
+	cout << "stlac 6 - vypis vozidiel \n";
+	cout << "stlac 7 - vypis dronov \n";	
+	cout << "stlac 8 - pre vypis statistik \n";
+	cout << "stlac 9 - vypis objednavok \n";
+	cout << "STLAC 10 - PRE NACITANIE UDAJOV ZO SUBORU \n";
 	cout << "======================================================= \n";
 	cin >> c;
 	system("CLS");
